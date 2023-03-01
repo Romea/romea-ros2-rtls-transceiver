@@ -1,0 +1,14 @@
+name: "transceiver"
+driver:
+  pkg: romea_trackbod_driver
+  device: /dev/ttyACM0
+  baudrate: 921600
+configuration:
+  type: decawave
+  communication: 4GHz_6M8bit
+  id: 0
+  pan_id: 1
+  mode: slave
+geometry:
+  parent_link: base_link
+  xyz: [1.0, 2.0, 3.0]

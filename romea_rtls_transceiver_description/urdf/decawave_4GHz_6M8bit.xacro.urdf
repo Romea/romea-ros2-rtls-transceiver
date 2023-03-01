@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot name="transceiver" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="prefix" default="" />
+  <xacro:arg name="name" default="transceiver" />
+  <xacro:arg name="id" default="0" />
+  <xacro:arg name="pan_id" default="0" />
+  <xacro:arg name="mode" default="connected" />
+  <xacro:arg name="parent_link" default="base_link" />
+  <xacro:arg name="xyz" default="0.0 0.0 0.0" />
+
+  <xacro:include filename="$(find romea_rtls_transceiver_description)/urdf/transceiver.xacro" />
+
+  <xacro:transceiver
+    prefix="$(arg prefix)"
+    name="$(arg name)"
+    xyz="$(arg xyz)"
+    type="decawave"
+    conf="4GHz_6M8bit"
+    parent_link="$(arg parent_link)"
+    pan_id="$(arg pan_id)"
+    id="$(arg id)"
+    mode="$(arg mode)" />
+
+  <!-- xyz z_offset parent_link type conf id pan_id bodynam  -->
+
+</robot>

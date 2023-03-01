@@ -1,0 +1,4 @@
+builtin_interfaces/Time stamp
+float64 range
+uint8 first_path_rx_power_level
+uint8 total_rx_power_level

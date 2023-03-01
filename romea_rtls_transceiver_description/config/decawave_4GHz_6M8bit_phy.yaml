@@ -1,0 +1,7 @@
+centre_frequency: 3993.6e6
+data_rate: 6.81e6
+bandwidth: 499.2e6
+prf: 16
+minimal_range: 0.5
+maximal_range: 25.0
+user_payload_maximal_length: 96

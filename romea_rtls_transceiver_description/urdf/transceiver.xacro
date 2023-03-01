@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<robot name="transceiver" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="transceiver" params="prefix name type conf id pan_id mode parent_link xyz ">
+
+    <xacro:property name="file_conf"
+      value="$(find romea_rtls_transceiver_description)/config/${type}_${conf}.yaml" />
+    <xacro:property name="props" value="${load_yaml(file_conf)}" />
+
+    <!-- <xacro:property name="name" value="${prefix}${name}" /> -->
+    <xacro:property name="link_name" value="${prefix}${name}_link" />
+    <xacro:property name="joint_name" value="${prefix}${name}_joint" />
+    <!-- <xacro:property name="controller_name" value="${prefix}${name}_controller" /> -->
+    <!-- <xacro:property name="body_name" value="${prefix}${bodyname}" /> -->
+    <xacro:property name="parent_link_name" value="${prefix}${parent_link}" />
+
+    <xacro:property name="minimal_range" value="${props['minimal_range']}" />
+    <xacro:property name="maximal_range" value="${props['maximal_range']}" />
+    <xacro:property name="noise_a" value="${props['noise_a']}" />
+    <xacro:property name="noise_b" value="${props['noise_b']}" />
+
+
+    <link name="${link_name}">
+      <inertial>
+        <mass value="0.1" />
+        <origin xyz="${xyz}" rpy="0 0 0" />
+        <inertia ixx="0.000001" ixy="0" ixz="0" iyy="0.000001" iyz="0" izz="0.000001" />
+      </inertial>
+
+      <visual>
+        <geometry>
+          <sphere radius="0.05" />
+        </geometry>
+        <material name="green">
+          <color rgba="0 1 0 1" />
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <sphere radius="0.05" />
+        </geometry>
+      </collision>
+    </link>
+
+    <joint name="${joint_name}" type="fixed">
+      <origin xyz="${xyz}" rpy="0 0 0" />
+      <parent link="${parent_link_name}" />
+      <child link="${link_name}" />
+    </joint>
+
+
+    <gazebo>
+      <plugin name="${name}" filename="libgazebo_ros_romea_rtls_transceiver.so">
+        <!-- <bodyName>${body_name}</bodyName> -->
+        <linkName>${link_name}</linkName>
+        <xyz>${xyz}</xyz>
+        <!-- <z_offset>${z_offset}</z_offset> -->
+        <!-- <function>${function}</function> -->
+        <mode>${mode}</mode>
+        <id>${pan_id}</id>
+        <id>${id}</id>
+        <minimal_range>${minimal_range}</minimal_range>
+        <maximal_range>${maximal_range}</maximal_range>
+        <noise_a>${noise_a}</noise_a>
+        <noise_b>${noise_b}</noise_b>
+        <name>${name}</name>
+      </plugin>
+    </gazebo>
+  </xacro:macro>
+
+</robot>
