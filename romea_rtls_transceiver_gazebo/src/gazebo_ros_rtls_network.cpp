@@ -39,14 +39,15 @@ bool GazeboRosRTLSNetwork::range(
 {
   GazeboRosRTLSTransceiver * initiator = transceivers_[initiator_euid];
   GazeboRosRTLSTransceiver * responder = transceivers_[responder_euid];
+
   if (responder != nullptr && initiator != nullptr) {
     auto range = initiator->ComputeRange(responder);
     if (!range.has_value()) {
       range_result.range = std::numeric_limits<double>::quiet_NaN();
-      return true;
+      return false;
     } else {
       range_result.range = range.value();
-      return false;
+      return true;
     }
 
     // TODO(Jean) simulate channel transmission

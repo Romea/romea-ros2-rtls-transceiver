@@ -22,6 +22,9 @@ GazeboRosRTLSTransceiverInterface::GazeboRosRTLSTransceiverInterface(
   input_payload_(),
   output_payload_()
 {
+  init_get_payload_service_server_(node, transceiver_name);
+  init_set_payload_service_server_(node, transceiver_name);
+  init_range_action_server_(node, transceiver_name);
 }
 
 //-----------------------------------------------------------------------------

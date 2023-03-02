@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<sdf version="1.6">
+  <world name="gazebo_ros_rtls_transceiver_world">
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <model name="transceiver0">
+      <pose>0 0 0.0 0 0 0</pose>
+      <link name="transceiver0_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver0">
+        <link_name>transceiver0_link</link_name>
+        <xyz>0.0 0.0 0.0</xyz>
+        <mode>slave</mode>
+        <pan_id>0</pan_id>
+        <id>0</id>
+        <minimal_range>0.5</minimal_range>
+        <maximal_range>25.0</maximal_range>
+        <noise_a>0.001</noise_a>
+        <noise_b>0.02</noise_b>
+        <name>transceiver0</name>
+      </plugin>
+    </model>
+
+    <model name="transceiver1">
+      <pose>10.0 0 0.0 0 0 0</pose>
+      <link name="transceiver1_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver1">
+        <link_name>transceiver1_link</link_name>
+        <xyz>0.0 0.0 0.0</xyz>
+        <mode>standalone</mode>
+        <pan_id>0</pan_id>
+        <id>1</id>
+        <minimal_range>0.5</minimal_range>
+        <maximal_range>25.0</maximal_range>
+        <noise_a>0.001</noise_a>
+        <noise_b>0.02</noise_b>
+        <name>transceiver1</name>
+      </plugin>
+    </model>
+
+    <model name="transceiver2">
+      <pose>-10.0 0 0.0 0 0 0</pose>
+      <link name="transceiver2_link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1 1 1</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver2">
+        <link_name>transceiver2_link</link_name>
+        <xyz>0.0 0.0 0.0</xyz>
+        <mode>slave</mode>
+        <pan_id>0</pan_id>
+        <id>2</id>
+        <minimal_range>0.5</minimal_range>
+        <maximal_range>12.0</maximal_range>
+        <noise_a>0.001</noise_a>
+        <noise_b>0.02</noise_b>
+        <name>transceiver2</name>
+      </plugin>
+    </model>
+
+  </world>
+</sdf>

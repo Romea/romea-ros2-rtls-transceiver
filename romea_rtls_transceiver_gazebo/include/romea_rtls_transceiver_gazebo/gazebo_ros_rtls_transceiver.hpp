@@ -26,7 +26,7 @@ public:
   GazeboRosRTLSTransceiver();
 
   /// Destructor.
-  virtual ~GazeboRosRTLSTransceiver();
+  virtual ~GazeboRosRTLSTransceiver() = default;
 
   /// Inherited
   void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) override;
