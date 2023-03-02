@@ -51,14 +51,14 @@
 
 
     <gazebo>
-      <plugin name="${name}" filename="libgazebo_ros_romea_rtls_transceiver.so">
+      <plugin name="${name}" filename="libromea_gazebo_ros_rtls_transceiver.so">
         <!-- <bodyName>${body_name}</bodyName> -->
         <linkName>${link_name}</linkName>
         <xyz>${xyz}</xyz>
         <!-- <z_offset>${z_offset}</z_offset> -->
         <!-- <function>${function}</function> -->
         <mode>${mode}</mode>
-        <id>${pan_id}</id>
+        <pan_id>${pan_id}</pan_id>
         <id>${id}</id>
         <minimal_range>${minimal_range}</minimal_range>
         <maximal_range>${maximal_range}</maximal_range>
