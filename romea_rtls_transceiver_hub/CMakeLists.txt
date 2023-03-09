@@ -15,6 +15,8 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+string(TOUPPER $ENV{ROS_DISTRO} ROS_DISTRO)
+set(ROS_DISTRO "ROS_${ROS_DISTRO}")
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
@@ -46,10 +48,36 @@ ament_target_dependencies(${PROJECT_NAME}
   romea_rtls_transceiver_msgs
 )
 
-rclcpp_components_register_node(${PROJECT_NAME}
-  PLUGIN "romea::RTLSTransceiverHub"
-  EXECUTABLE rtls_transceiver_hub
-)
+if(${ROS_DISTRO} STREQUAL "ROS_GALACTIC")
+
+  rclcpp_components_register_nodes(${PROJECT_NAME} "romea::RTLSTransceiverHub")
+
+  add_executable(rtls_transceiver_hub_node
+    src/rtls_transceiver_hub.cpp
+    src/rtls_transceiver_hub_node.cpp)
+
+  target_include_directories(rtls_transceiver_hub_node PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+  ament_target_dependencies(rtls_transceiver_hub_node
+    rclcpp
+    rclcpp_components
+    romea_core_common
+    romea_core_rtls
+    romea_common_utils
+    romea_rtls_transceiver_utils
+    romea_rtls_transceiver_msgs)
+
+  install(TARGETS
+    rtls_transceiver_hub_node
+    DESTINATION lib/${PROJECT_NAME})
+
+else()
+  rclcpp_components_register_node(${PROJECT_NAME}
+  PLUGIN "romea::CmdMux"
+  EXECUTABLE rtls_transceiver_hub_node
+  EXECUTOR "MultiThreadedExecutor")
+endif()
 
 install(TARGETS
   ${PROJECT_NAME}
