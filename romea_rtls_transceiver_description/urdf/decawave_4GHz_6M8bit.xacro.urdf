@@ -8,6 +8,7 @@
   <xacro:arg name="mode" default="connected" />
   <xacro:arg name="parent_link" default="base_link" />
   <xacro:arg name="xyz" default="0.0 0.0 0.0" />
+  <xacro:arg name="ros_namespace" default="/" />
 
   <xacro:include filename="$(find romea_rtls_transceiver_description)/urdf/transceiver.xacro" />
 
@@ -20,8 +21,7 @@
     parent_link="$(arg parent_link)"
     pan_id="$(arg pan_id)"
     id="$(arg id)"
-    mode="$(arg mode)" />
-
-  <!-- xyz z_offset parent_link type conf id pan_id bodynam  -->
+    mode="$(arg mode)"
+    ros_namespace="$(arg ros_namespace)" />
 
 </robot>

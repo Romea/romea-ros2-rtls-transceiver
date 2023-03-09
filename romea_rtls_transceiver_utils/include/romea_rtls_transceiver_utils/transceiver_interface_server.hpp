@@ -46,7 +46,6 @@ public:
 public:
   TransceiverInterfaceServer(
     std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name,
     const RTLSTransceiverEUID & transceiver_euid,
     const RTLSTransceiverFunction & transceiver_function = RTLSTransceiverFunction::NONE);
 
@@ -60,17 +59,11 @@ protected:
   virtual bool get_payload_(Payload & data) = 0;
 
 protected:
-  void init_get_payload_service_server_(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name);
+  void init_get_payload_service_server_();
 
-  void init_set_payload_service_server_(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name);
+  void init_set_payload_service_server_();
 
-  void init_range_action_server_(
-    std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name);
+  void init_range_action_server_();
 
 protected:
   rclcpp_action::GoalResponse ranging_handle_goal_(
@@ -95,7 +88,6 @@ protected:
 protected:
   std::shared_ptr<rclcpp::Node> node_;
 
-  std::string transceiver_name_;
   RTLSTransceiverEUID transceiver_euid_;
   RTLSTransceiverFunction transceiver_function_;
 

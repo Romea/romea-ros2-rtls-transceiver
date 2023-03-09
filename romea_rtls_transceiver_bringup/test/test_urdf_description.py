@@ -44,5 +44,5 @@ def test_rtls_transceiver_parent_link(urdf):
     assert urdf.find("joint/parent").get("link") == "robot_base_link"
 
 
-# def test_gps_rate(urdf):
-#     assert urdf.find("gazebo/sensor/update_rate").text == "10"
+def test_plugin_namespace(urdf):
+    assert urdf.find("gazebo/plugin/ros/namespace").text == "/robot/rtls/transceiver"

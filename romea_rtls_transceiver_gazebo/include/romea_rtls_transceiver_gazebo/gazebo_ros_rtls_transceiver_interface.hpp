@@ -20,7 +20,6 @@ class GazeboRosRTLSTransceiverInterface : public romea::TransceiverInterfaceServ
 public:
   GazeboRosRTLSTransceiverInterface(
     std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name,
     const romea::RTLSTransceiverEUID & euid);
 
   virtual ~GazeboRosRTLSTransceiverInterface() = default;

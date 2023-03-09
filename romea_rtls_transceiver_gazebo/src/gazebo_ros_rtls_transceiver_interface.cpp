@@ -16,15 +16,14 @@ namespace gazebo
 //-----------------------------------------------------------------------------
 GazeboRosRTLSTransceiverInterface::GazeboRosRTLSTransceiverInterface(
   std::shared_ptr<rclcpp::Node> node,
-  const std::string & transceiver_name,
   const romea::RTLSTransceiverEUID & transceiver_euid)
-: TransceiverInterfaceServer(node, transceiver_name, transceiver_euid),
+: TransceiverInterfaceServer(node, transceiver_euid),
   input_payload_(),
   output_payload_()
 {
-  init_get_payload_service_server_(node, transceiver_name);
-  init_set_payload_service_server_(node, transceiver_name);
-  init_range_action_server_(node, transceiver_name);
+  init_get_payload_service_server_();
+  init_set_payload_service_server_();
+  init_range_action_server_();
 }
 
 //-----------------------------------------------------------------------------

@@ -1,4 +1,5 @@
 name: "transceiver"
+namespace: rtls
 driver:
   pkg: romea_trackbod_driver
   device: /dev/ttyACM0

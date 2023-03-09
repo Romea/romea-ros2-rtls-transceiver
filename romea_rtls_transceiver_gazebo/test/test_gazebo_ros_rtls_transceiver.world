@@ -25,17 +25,20 @@
           </geometry>
         </visual>
       </link>
-      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver0">
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="driver">
         <link_name>transceiver0_link</link_name>
         <xyz>0.0 0.0 0.0</xyz>
         <mode>slave</mode>
-        <pan_id>0</pan_id>
-        <id>0</id>
+        <transceiver_name>transceiver0</transceiver_name>
+        <transceiver_pan_id>0</transceiver_pan_id>
+        <transceiver_id>0</transceiver_id>
         <minimal_range>0.5</minimal_range>
         <maximal_range>25.0</maximal_range>
         <noise_a>0.001</noise_a>
         <noise_b>0.02</noise_b>
-        <name>transceiver0</name>
+        <ros>
+          <namespace>transceiver0</namespace>
+        </ros>
       </plugin>
     </model>
 
@@ -57,17 +60,20 @@
           </geometry>
         </visual>
       </link>
-      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver1">
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="driver">
         <link_name>transceiver1_link</link_name>
         <xyz>0.0 0.0 0.0</xyz>
         <mode>standalone</mode>
-        <pan_id>0</pan_id>
-        <id>1</id>
+        <transceiver_name>transceiver1</transceiver_name>
+        <transceiver_pan_id>0</transceiver_pan_id>
+        <transceiver_id>1</transceiver_id>
         <minimal_range>0.5</minimal_range>
         <maximal_range>25.0</maximal_range>
         <noise_a>0.001</noise_a>
         <noise_b>0.02</noise_b>
-        <name>transceiver1</name>
+        <ros>
+          <namespace>transceiver1</namespace>
+        </ros>
       </plugin>
     </model>
 
@@ -89,17 +95,20 @@
           </geometry>
         </visual>
       </link>
-      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="transceiver2">
+      <plugin filename="libromea_gazebo_ros_rtls_transceiver.so" name="driver">
         <link_name>transceiver2_link</link_name>
         <xyz>0.0 0.0 0.0</xyz>
         <mode>slave</mode>
-        <pan_id>0</pan_id>
-        <id>2</id>
+        <transceiver_name>transceiver2</transceiver_name>
+        <transceiver_pan_id>0</transceiver_pan_id>
+        <transceiver_id>2</transceiver_id>
         <minimal_range>0.5</minimal_range>
         <maximal_range>12.0</maximal_range>
         <noise_a>0.001</noise_a>
         <noise_b>0.02</noise_b>
-        <name>transceiver2</name>
+        <ros>
+          <namespace>transceiver2</namespace>
+        </ros>
       </plugin>
     </model>
 

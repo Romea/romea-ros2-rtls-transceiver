@@ -20,7 +20,7 @@ namespace romea
 
 //-----------------------------------------------------------------------------
 RTLSTransceiverHub::RTLSTransceiverHub(const rclcpp::NodeOptions & options)
-: node_(std::make_shared<rclcpp::Node>("cmd_mux", options)),
+: node_(std::make_shared<rclcpp::Node>("transceiver_hub", options)),
   range_pub_(nullptr),
   poll_sub_(nullptr),
   payload_sub_(nullptr),
@@ -112,8 +112,32 @@ void RTLSTransceiverHub::init_range_pub_()
 void RTLSTransceiverHub::poll_callback_(Poll::SharedPtr poll_msg)
 {
   if (!external_transceivers_ids_.empty()) {
-    auto & initiator = embedded_transceivers_[poll_msg->transceivers.initiator_name];
-    auto & responder_id = external_transceivers_ids_[poll_msg->transceivers.responder_name];
+    auto embedded_transceiver_info = embedded_transceivers_.find(
+      poll_msg->transceivers.initiator_name);
+
+    if (embedded_transceiver_info == embedded_transceivers_.end()) {
+      std::stringstream msg;
+      msg << "No initiator transceiver called";
+      msg << " [" + poll_msg->transceivers.initiator_name + "] ";
+      msg << "is connected to hub, no ranging will be done" << std::endl;
+      RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
+      return;
+    }
+
+    auto external_transceiver_info = external_transceivers_ids_.find(
+      poll_msg->transceivers.responder_name);
+
+    if (external_transceiver_info == external_transceivers_ids_.end()) {
+      std::stringstream msg;
+      msg << "No external transceiver called";
+      msg << " [" + poll_msg->transceivers.responder_name + "] ";
+      msg << "has been registerd to hub, no ranging will be done" << std::endl;
+      RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
+      return;
+    }
+
+    auto & initiator = embedded_transceiver_info->second;
+    auto & responder_id = external_transceiver_info->second;
 
     if (!poll_msg->payload.data.empty()) {
       initiator->set_payload(poll_msg->payload);
@@ -124,6 +148,7 @@ void RTLSTransceiverHub::poll_callback_(Poll::SharedPtr poll_msg)
     if (initiator->ranging(responder_id, range_msg->range, std::chrono::seconds(1))) {
       initiator->get_payload(range_msg->payload);
     }
+
     range_pub_->publish(std::move(range_msg));
   }
 }

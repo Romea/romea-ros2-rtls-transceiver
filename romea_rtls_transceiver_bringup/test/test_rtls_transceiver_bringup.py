@@ -18,6 +18,10 @@ def test_get_name(meta_description):
     assert meta_description.get_name() == "transceiver"
 
 
+def test_get_namespace(meta_description):
+    assert meta_description.get_namespace() == "rtls"
+
+
 def test_has_driver_configuration(meta_description):
     assert meta_description.has_driver_configuration() is True
 

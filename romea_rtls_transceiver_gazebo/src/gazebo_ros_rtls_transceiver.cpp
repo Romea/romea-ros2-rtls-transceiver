@@ -73,8 +73,8 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   impl_->link = _model->GetLink(transceiver_link_name);
 
   std::string transceiver_name;
-  if (_sdf->HasElement("name")) {
-    _sdf->GetElement("name")->GetValue()->Get(transceiver_name);
+  if (_sdf->HasElement("transceiver_name")) {
+    _sdf->GetElement("transceiver_name")->GetValue()->Get(transceiver_name);
   } else {
     gzthrow("RTLS transceiver name not found in sdf");
     return;
@@ -83,8 +83,8 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   // std::cout << "transceiver_name" << transceiver_name << std::endl;
 
   unsigned int transceiver_pan_id;
-  if (_sdf->HasElement("pan_id")) {
-    _sdf->GetElement("pan_id")->GetValue()->Get(transceiver_pan_id);
+  if (_sdf->HasElement("transceiver_pan_id")) {
+    _sdf->GetElement("transceiver_pan_id")->GetValue()->Get(transceiver_pan_id);
   } else {
     gzthrow("RTLS transceiver pan_id not found in sdf");
     return;
@@ -92,8 +92,8 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   // std::cout << "transceiver_pan_id" << transceiver_pan_id << std::endl;
 
   unsigned int transceiver_id;
-  if (_sdf->HasElement("id")) {
-    _sdf->GetElement("id")->GetValue()->Get(transceiver_id);
+  if (_sdf->HasElement("transceiver_id")) {
+    _sdf->GetElement("transceiver_id")->GetValue()->Get(transceiver_id);
   } else {
     gzthrow("RTLS transceiver id not found in sdf");
     return;
@@ -160,7 +160,7 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
 
   if (mode != "standalone") {
     impl_->ros_interface = std::make_unique<GazeboRosRTLSTransceiverInterface>(
-      gazebo_ros::Node::Get(_sdf), transceiver_name, transceiver_euid);
+      gazebo_ros::Node::Get(_sdf), transceiver_euid);
   }
 
   GazeboRosRTLSNetwork::Instance().add_transceiver(transceiver_euid, this);

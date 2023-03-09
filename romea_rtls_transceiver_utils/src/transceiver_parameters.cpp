@@ -6,11 +6,11 @@
 #include <string>
 
 // romea ros
-#include "romea_common_transceiver_utils/params/node_parameters.hpp"
-#include "romea_common_transceiver_utils/params/eigen_parameters.hpp"
+#include "romea_common_utils/params/node_parameters.hpp"
+#include "romea_common_utils/params/eigen_parameters.hpp"
 
 // local
-#include "romea_rtls_utils/transceiver_parameters.hpp"
+#include "romea_rtls_transceiver_utils/transceiver_parameters.hpp"
 
 namespace
 {

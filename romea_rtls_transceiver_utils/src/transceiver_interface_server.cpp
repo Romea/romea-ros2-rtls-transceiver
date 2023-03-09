@@ -16,11 +16,9 @@ namespace romea
 //-----------------------------------------------------------------------------
 TransceiverInterfaceServer::TransceiverInterfaceServer(
   std::shared_ptr<rclcpp::Node> node,
-  const std::string & transceiver_name,
   const RTLSTransceiverEUID & transceiver_euid,
   const RTLSTransceiverFunction & transceiver_function)
 : node_(node),
-  transceiver_name_(transceiver_name),
   transceiver_euid_(transceiver_euid),
   transceiver_function_(transceiver_function),
   ranging_is_pending_(false),
@@ -43,39 +41,33 @@ TransceiverInterfaceServer::TransceiverInterfaceServer(
 // }
 
 //-----------------------------------------------------------------------------
-void TransceiverInterfaceServer::init_range_action_server_(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & transceiver_name)
+void TransceiverInterfaceServer::init_range_action_server_()
 {
   using namespace std::placeholders;
   ranging_action_server_ = rclcpp_action::create_server<RangingAction>(
-    node, transceiver_name + "/range",
+    node_, "range",
     std::bind(&TransceiverInterfaceServer::ranging_handle_goal_, this, _1, _2),
     std::bind(&TransceiverInterfaceServer::ranging_handle_cancel_, this, _1),
     std::bind(&TransceiverInterfaceServer::ranging_handle_accepted_, this, _1));
 }
 
 //-----------------------------------------------------------------------------
-void TransceiverInterfaceServer::init_get_payload_service_server_(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & transceiver_name)
+void TransceiverInterfaceServer::init_get_payload_service_server_()
 {
   using namespace std::placeholders;
 
-  get_payload_service_server_ = node->create_service<GetPayloadService>(
-    transceiver_name + "/get_payload",
+  get_payload_service_server_ = node_->create_service<GetPayloadService>(
+    "get_payload",
     std::bind(&TransceiverInterfaceServer::get_payload_callback_, this, _1, _2));
 }
 
 //-----------------------------------------------------------------------------
-void TransceiverInterfaceServer::init_set_payload_service_server_(
-  std::shared_ptr<rclcpp::Node> node,
-  const std::string & transceiver_name)
+void TransceiverInterfaceServer::init_set_payload_service_server_()
 {
   using namespace std::placeholders;
 
-  set_payload_service_server_ = node->create_service<SetPayloadService>(
-    transceiver_name + "/set_payload",
+  set_payload_service_server_ = node_->create_service<SetPayloadService>(
+    "set_payload",
     std::bind(&TransceiverInterfaceServer::set_payload_callback_, this, _1, _2));
 }
 
@@ -89,7 +81,7 @@ rclcpp_action::GoalResponse TransceiverInterfaceServer::ranging_handle_goal_(
   {
     std::stringstream msg;
     msg << "Ranging action has been rejected from transceiver ";
-    msg << transceiver_name_;
+    msg << node_->get_namespace();
     msg << " because it is a ";
     msg << functionToString(transceiver_function_);
     RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
@@ -99,7 +91,7 @@ rclcpp_action::GoalResponse TransceiverInterfaceServer::ranging_handle_goal_(
   if (goal->responder_id == transceiver_euid_.id) {
     std::stringstream msg;
     msg << "Ranging action has been rejected from transceiver ";
-    msg << transceiver_name_;
+    msg << node_->get_namespace();
     msg << " because it cannot achieve ranging with itself ";
     RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
     return rclcpp_action::GoalResponse::REJECT;
@@ -108,7 +100,7 @@ rclcpp_action::GoalResponse TransceiverInterfaceServer::ranging_handle_goal_(
   if (ranging_is_pending_) {
     std::stringstream msg;
     msg << "Ranging action has been rejected from transceiver ";
-    msg << transceiver_name_;
+    msg << node_->get_namespace();
     msg << " beacause a ranging is already pending ";
     RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
     return rclcpp_action::GoalResponse::REJECT;
@@ -166,7 +158,7 @@ void TransceiverInterfaceServer::get_payload_callback_(
   {
     std::stringstream msg;
     msg << "Cannot get payload from transceiver ";
-    msg << transceiver_name_;
+    msg << node_->get_namespace();
     msg << " because it is a ";
     msg << functionToString(transceiver_function_);
     RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());
@@ -184,7 +176,7 @@ void TransceiverInterfaceServer::set_payload_callback_(
   if (transceiver_function_ == RTLSTransceiverFunction::LISTENER) {
     std::stringstream msg;
     msg << "Cannot set payload from transceiver ";
-    msg << transceiver_name_;
+    msg << node_->get_namespace();
     msg << " because it is a ";
     msg << functionToString(transceiver_function_);
     RCLCPP_ERROR_STREAM(node_->get_logger(), msg.str());

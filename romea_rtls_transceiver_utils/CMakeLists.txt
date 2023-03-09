@@ -31,8 +31,7 @@ add_library(${PROJECT_NAME} SHARED
   # src/rtls_conversions.cpp
   src/transceiver_interface_client.cpp
   src/transceiver_interface_server.cpp
-  #src/transceiver_parameters.cpp
-  )
+  src/transceiver_parameters.cpp)
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp

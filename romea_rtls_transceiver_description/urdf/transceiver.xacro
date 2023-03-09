@@ -1,17 +1,15 @@
 <?xml version="1.0"?>
 <robot name="transceiver" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:macro name="transceiver" params="prefix name type conf id pan_id mode parent_link xyz ">
+  <xacro:macro name="transceiver"
+    params="prefix name type conf id pan_id mode parent_link xyz ros_namespace">
 
     <xacro:property name="file_conf"
       value="$(find romea_rtls_transceiver_description)/config/${type}_${conf}.yaml" />
     <xacro:property name="props" value="${load_yaml(file_conf)}" />
 
-    <!-- <xacro:property name="name" value="${prefix}${name}" /> -->
     <xacro:property name="link_name" value="${prefix}${name}_link" />
     <xacro:property name="joint_name" value="${prefix}${name}_joint" />
-    <!-- <xacro:property name="controller_name" value="${prefix}${name}_controller" /> -->
-    <!-- <xacro:property name="body_name" value="${prefix}${bodyname}" /> -->
     <xacro:property name="parent_link_name" value="${prefix}${parent_link}" />
 
     <xacro:property name="minimal_range" value="${props['minimal_range']}" />
@@ -51,20 +49,20 @@
 
 
     <gazebo>
-      <plugin name="${name}" filename="libromea_gazebo_ros_rtls_transceiver.so">
-        <!-- <bodyName>${body_name}</bodyName> -->
-        <linkName>${link_name}</linkName>
+      <plugin name="driver" filename="libromea_gazebo_ros_rtls_transceiver.so">
+        <link_name>${link_name}</link_name>
         <xyz>${xyz}</xyz>
-        <!-- <z_offset>${z_offset}</z_offset> -->
-        <!-- <function>${function}</function> -->
         <mode>${mode}</mode>
-        <pan_id>${pan_id}</pan_id>
-        <id>${id}</id>
+        <transceiver_name>${name}</transceiver_name>
+        <transceiver_pan_id>${pan_id}</transceiver_pan_id>
+        <transceiver_id>${id}</transceiver_id>
         <minimal_range>${minimal_range}</minimal_range>
         <maximal_range>${maximal_range}</maximal_range>
         <noise_a>${noise_a}</noise_a>
         <noise_b>${noise_b}</noise_b>
-        <name>${name}</name>
+        <ros>
+          <namespace>${ros_namespace}</namespace>
+        </ros>
       </plugin>
     </gazebo>
   </xacro:macro>

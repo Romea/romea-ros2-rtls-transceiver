@@ -23,16 +23,15 @@ class MocTransceiverInterfaceServer : public romea::TransceiverInterfaceServer
 public:
   MocTransceiverInterfaceServer(
     std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name,
     const romea::RTLSTransceiverFunction & transceiver_function)
-  : TransceiverInterfaceServer(node, transceiver_name, {0, 0}, transceiver_function),
+  : TransceiverInterfaceServer(node, {0, 0}, transceiver_function),
     ranging_success_(true),
     get_payload_success_(true),
     set_payload_success_(true)
   {
-    init_get_payload_service_server_(node, transceiver_name);
-    init_set_payload_service_server_(node, transceiver_name);
-    init_range_action_server_(node, transceiver_name);
+    init_get_payload_service_server_();
+    init_set_payload_service_server_();
+    init_range_action_server_();
   }
 
   void ranging_will_failed() {ranging_success_ = false;}
@@ -96,7 +95,7 @@ protected:
     executor_ = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
 
     node_client_ = std::make_shared<rclcpp::Node>("test_rtls_transceiver_interfaces_client");
-    node_server_ = std::make_shared<rclcpp::Node>("test_rtls_transceiver_interfaces_server");
+    node_server_ = std::make_shared<rclcpp::Node>("test_rtls_transceiver_interfaces_server", "tag");
     executor_->add_node(node_client_);
     executor_->add_node(node_server_);
     executor_thread_ = std::thread([this]() {this->executor_->spin();});
@@ -121,7 +120,7 @@ protected:
     romea::RTLSTransceiverFunction::INITIATOR)
   {
     server_ = std::make_unique<MocTransceiverInterfaceServer>(
-      node_server_, "tag", transceiver_function);
+      node_server_, transceiver_function);
   }
 
   std::shared_ptr<rclcpp::Node> node_client_;

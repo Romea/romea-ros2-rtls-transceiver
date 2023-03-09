@@ -18,7 +18,11 @@ def urdf_xml():
     id = "0 "
     parent_link = "base_link"
     xyz = [1.0, 2.0, 3.0]
-    return ET.fromstring(urdf(prefix, name, type, conf, pan_id, id, mode, parent_link, xyz))
+    ros_namespace = "ns"
+    return ET.fromstring(urdf(prefix, name,
+                              type, conf, pan_id, id, mode,
+                              parent_link, xyz,
+                              ros_namespace))
 
 
 def test_transceiver_name(urdf_xml):
@@ -32,6 +36,9 @@ def test_transceiver_position(urdf_xml):
 def test_transceiver_parent_link(urdf_xml):
     assert urdf_xml.find("joint/parent").get("link") == "robot_base_link"
 
+
+def test_plugin_namespace(urdf_xml):
+    assert urdf_xml.find("gazebo/plugin/ros/namespace").text == "ns"
 
 # def test_gps_rate(urdf_xml):
 #     assert urdf_xml.find("gazebo/sensor/update_rate").text == "10"

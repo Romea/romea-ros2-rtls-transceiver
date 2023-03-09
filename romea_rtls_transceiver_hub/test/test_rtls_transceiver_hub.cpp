@@ -28,14 +28,13 @@ class Tag : public romea::TransceiverInterfaceServer
 public:
   Tag(
     std::shared_ptr<rclcpp::Node> node,
-    const std::string & transceiver_name,
     const romea::RTLSTransceiverEUID & transceiver_euid_,
     const romea::RTLSTransceiverFunction & transceiver_function)
-  : TransceiverInterfaceServer(node, transceiver_name, transceiver_euid_, transceiver_function)
+  : TransceiverInterfaceServer(node, transceiver_euid_, transceiver_function)
   {
-    init_get_payload_service_server_(node, transceiver_name);
-    init_set_payload_service_server_(node, transceiver_name);
-    init_range_action_server_(node, transceiver_name);
+    init_get_payload_service_server_();
+    init_set_payload_service_server_();
+    init_range_action_server_();
   }
 
   virtual ~Tag() = default;
@@ -95,7 +94,7 @@ public:
     configuration->transceivers_ids = {255, 256};
     hub_config_srv_client_->send_request(configuration);
 
-    poll_pub_ = node->create_publisher<Poll>("/poll", romea::reliable(1));
+    poll_pub_ = node->create_publisher<Poll>("/poll", romea::sensor_data_qos());
 
     using namespace std::placeholders;
     auto callback = std::bind(&Master::range_callback_, this, _1);
@@ -151,20 +150,18 @@ protected:
     executor_thread_ = std::thread([this]() {this->executor_->spin();});
 
     node_master = std::make_shared<rclcpp::Node>("test_rtls_transceiver_master");
-    node_tag0 = std::make_shared<rclcpp::Node>("test_rtls_transceiver_tag0");
-    node_tag1 = std::make_shared<rclcpp::Node>("test_rtls_transceiver_tag1");
+    node_tag0 = std::make_shared<rclcpp::Node>("test_rtls_transceiver_tag0", "tag0");
+    node_tag1 = std::make_shared<rclcpp::Node>("test_rtls_transceiver_tag1", "tag1");
 
     executor_->add_node(node_tag0);
     tag0_ = std::make_shared<Tag>(
       node_tag0,
-      "tag0",
       romea::RTLSTransceiverEUID{0, 0},
       romea::RTLSTransceiverFunction::INITIATOR);
 
     executor_->add_node(node_tag1);
     tag1_ = std::make_shared<Tag>(
       node_tag1,
-      "tag1",
       romea::RTLSTransceiverEUID{0, 1},
       romea::RTLSTransceiverFunction::INITIATOR);
 
@@ -173,12 +170,14 @@ protected:
       {"--ros-args",
         "--params-file",
         std::string(TEST_DIR) + "/test_rtls_transceiver_hub.yaml"});
+
     hub_ = std::make_shared<Hub>(no);
     executor_->add_node(hub_->get_node_base_interface());
 
     executor_->add_node(node_master);
     master_ = std::make_shared<Master>(node_master);
   }
+
 
   void TearDown() override
   {
@@ -200,12 +199,30 @@ protected:
   std::shared_ptr<Master> master_;
 };
 
+TEST_F(TestRTLSTransceiverHub, check_poll_tag2_anchor_0) {
+  Poll poll;
+  poll.transceivers.initiator_name = "tag2";
+  poll.transceivers.responder_name = "anchor0";
+  master_->poll(poll);
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  EXPECT_EQ(master_->range, nullptr);
+}
+
+TEST_F(TestRTLSTransceiverHub, check_poll_tag0_anchor_2) {
+  Poll poll;
+  poll.transceivers.initiator_name = "tag0";
+  poll.transceivers.responder_name = "anchor2";
+  master_->poll(poll);
+  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+  EXPECT_EQ(master_->range, nullptr);
+}
+
 TEST_F(TestRTLSTransceiverHub, check_poll_tag0_anchor_0) {
   Poll poll;
   poll.transceivers.initiator_name = "tag0";
   poll.transceivers.responder_name = "anchor0";
-
   master_->poll(poll);
+
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 255);
   EXPECT_EQ(master_->range->payload.data.size(), 0);
@@ -216,8 +233,8 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_0) {
   poll.payload.data = {1, 2, 3, 4};
   poll.transceivers.initiator_name = "tag1";
   poll.transceivers.responder_name = "anchor0";
-
   master_->poll(poll);
+
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 65811);
   EXPECT_EQ(master_->range->payload.data.size(), 4);
@@ -231,8 +248,8 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag0_anchor_1) {
   Poll poll;
   poll.transceivers.initiator_name = "tag0";
   poll.transceivers.responder_name = "anchor1";
-
   master_->poll(poll);
+
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 256);
   EXPECT_EQ(master_->range->payload.data.size(), 0);
@@ -243,8 +260,8 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_1) {
   poll.payload.data = {1, 2, 3, 4};
   poll.transceivers.initiator_name = "tag1";
   poll.transceivers.responder_name = "anchor1";
-
   master_->poll(poll);
+
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 65812);
   EXPECT_EQ(master_->range->payload.data.size(), 4);
