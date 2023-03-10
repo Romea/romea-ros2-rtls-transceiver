@@ -4,7 +4,7 @@
 
 import pytest
 import xml.etree.ElementTree as ET
-from romea_rtls_transceiver_description import urdf
+from romea_rtls_transceiver_description import transceiver_urdf
 
 
 @pytest.fixture(scope="module")
@@ -19,10 +19,10 @@ def urdf_xml():
     parent_link = "base_link"
     xyz = [1.0, 2.0, 3.0]
     ros_namespace = "ns"
-    return ET.fromstring(urdf(prefix, name,
-                              type, conf, pan_id, id, mode,
-                              parent_link, xyz,
-                              ros_namespace))
+    return ET.fromstring(transceiver_urdf(prefix, name,
+                                          type, conf, pan_id, id, mode,
+                                          parent_link, xyz,
+                                          ros_namespace))
 
 
 def test_transceiver_name(urdf_xml):

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<robot name="anchor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:macro name="anchor" params="name type conf id pan_id">
+
+    <xacro:include filename="$(find romea_rtls_transceiver_description)/urdf/transceiver.xacro" />
+
+    <link name="support" />
+    <xacro:transceiver prefix="" name="${name}" type="${type}" conf="${conf}" id=" ${id}"
+      pan_id=" ${id}" mode="standalone" parent_link="support" xyz=" 0.0 0.0 0.0" ros_namespace="" />
+
+    <gazebo reference="${name}_link">
+      <turnGravityOff>true</turnGravityOff>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

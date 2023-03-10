@@ -6,11 +6,11 @@ import xacro
 from ament_index_python.packages import get_package_share_directory
 
 
-def urdf(prefix, name, type, configuration, pan_id, id, mode, parent_link, xyz, ros_namespace):
+def transceiver_urdf(prefix, name, type, configuration, pan_id, id, mode, parent_link, xyz, ros_namespace):
 
     xacro_file = (
         get_package_share_directory("romea_rtls_transceiver_description")
-        + "/urdf/"
+        + "/urdf/transceiver_"
         + type
         + "_"
         + configuration
@@ -28,6 +28,28 @@ def urdf(prefix, name, type, configuration, pan_id, id, mode, parent_link, xyz, 
             "parent_link": parent_link,
             "xyz": " ".join(map(str, xyz)),
             "ros_namespace": ros_namespace
+        },
+    )
+    return urdf_xml.toprettyxml()
+
+
+def anchor_urdf(name, type, configuration, pan_id, id):
+
+    xacro_file = (
+        get_package_share_directory("romea_rtls_transceiver_description")
+        + "/urdf/anchor_"
+        + type
+        + "_"
+        + configuration
+        + ".xacro.urdf"
+    )
+
+    urdf_xml = xacro.process_file(
+        xacro_file,
+        mappings={
+            "name": name,
+            "pan_id": str(pan_id),
+            "id": str(id),
         },
     )
     return urdf_xml.toprettyxml()

@@ -59,7 +59,7 @@ def urdf_description(robot_namespace, meta_description_filename):
         meta_description.get_name()
     )
 
-    return romea_rtls_transceiver_description.urdf(
+    return romea_rtls_transceiver_description.transceiver_urdf(
         robot_urdf_prefix(robot_namespace),
         meta_description.get_name(),
         meta_description.get_type(),
