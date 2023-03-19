@@ -16,6 +16,7 @@
   <exec_depend>romea_rtls_transceiver_bringup</exec_depend>
   <exec_depend>romea_rtls_transceiver_description</exec_depend>
   <exec_depend>romea_rtls_transceiver_gazebo</exec_depend>
+  <exec_depend>romea_rtls_transceiver_hub</exec_depend>
   <exec_depend>romea_rtls_transceiver_msgs</exec_depend>
   <exec_depend>romea_rtls_transceiver_utils</exec_depend>
 
