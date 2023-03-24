@@ -225,7 +225,7 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag0_anchor_0) {
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 255);
-  EXPECT_EQ(master_->range->payload.data.size(), 0);
+  EXPECT_EQ(master_->range->payload.data.size(), 0u);
 }
 
 TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_0) {
@@ -237,7 +237,7 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_0) {
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 65811);
-  EXPECT_EQ(master_->range->payload.data.size(), 4);
+  EXPECT_EQ(master_->range->payload.data.size(), 4u);
   EXPECT_EQ(master_->range->payload.data[0], 1);
   EXPECT_EQ(master_->range->payload.data[1], 2);
   EXPECT_EQ(master_->range->payload.data[2], 3);
@@ -252,7 +252,7 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag0_anchor_1) {
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 256);
-  EXPECT_EQ(master_->range->payload.data.size(), 0);
+  EXPECT_EQ(master_->range->payload.data.size(), 0u);
 }
 
 TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_1) {
@@ -264,7 +264,7 @@ TEST_F(TestRTLSTransceiverHub, check_poll_tag1_anchor_1) {
 
   std::this_thread::sleep_for(std::chrono::milliseconds(100));
   EXPECT_DOUBLE_EQ(master_->range->range.range, 65812);
-  EXPECT_EQ(master_->range->payload.data.size(), 4);
+  EXPECT_EQ(master_->range->payload.data.size(), 4u);
   EXPECT_EQ(master_->range->payload.data[0], 1);
   EXPECT_EQ(master_->range->payload.data[1], 2);
   EXPECT_EQ(master_->range->payload.data[2], 3);

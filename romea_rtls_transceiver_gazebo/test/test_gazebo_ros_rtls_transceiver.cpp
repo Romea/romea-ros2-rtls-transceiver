@@ -73,7 +73,7 @@ TEST_F(GazeboRosRTLSTransceiverTest, checkRangeWithNoPayloadExchange)
   romea::TransceiverInterfaceClient::Payload transceiver0_payload;
   EXPECT_TRUE(transceiver0_client->ranging(1, result, std::chrono::seconds(1)));
   EXPECT_TRUE(transceiver0_client->get_payload(transceiver0_payload));
-  EXPECT_EQ(transceiver0_payload.data.size(), 0);
+  EXPECT_EQ(transceiver0_payload.data.size(), 0u);
 }
 
 TEST_F(GazeboRosRTLSTransceiverTest, checkRangeWithPayloadExchange)
