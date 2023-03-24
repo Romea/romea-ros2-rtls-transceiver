@@ -10,8 +10,8 @@ from romea_rtls_transceiver_bringup import RTLSTransceiverMetaDescription
 
 @pytest.fixture(scope="module")
 def meta_description():
-    meta_description_filename = os.path.join(os.getcwd(), "test_rtls_transceiver_bringup.yaml")
-    return RTLSTransceiverMetaDescription(meta_description_filename)
+    meta_description_file_path = os.path.join(os.getcwd(), "test_rtls_transceiver_bringup.yaml")
+    return RTLSTransceiverMetaDescription(meta_description_file_path)
 
 
 def test_get_name(meta_description):

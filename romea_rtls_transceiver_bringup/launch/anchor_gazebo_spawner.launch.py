@@ -11,11 +11,11 @@ from romea_rtls_transceiver_description import anchor_urdf
 
 
 def get_meta_description(context):
-    anchor_meta_description_filename = LaunchConfiguration(
-        "meta_description_filename"
+    anchor_meta_description_file_path = LaunchConfiguration(
+        "meta_description_file_path"
     ).perform(context)
 
-    return RTLSTransceiverMetaDescription(anchor_meta_description_filename)
+    return RTLSTransceiverMetaDescription(anchor_meta_description_file_path)
 
 
 def launch_setup(context, *args, **kwargs):
@@ -83,7 +83,7 @@ def generate_launch_description():
 
     declared_arguments = []
 
-    declared_arguments.append(DeclareLaunchArgument("meta_description_filename"))
+    declared_arguments.append(DeclareLaunchArgument("meta_description_file_path"))
 
     return LaunchDescription(
         declared_arguments + [OpaqueFunction(function=launch_setup)]
