@@ -3,16 +3,16 @@ repositories:
     type: git
     url: git@gitlab-ssh.irstea.fr:romea_core/romea_common.git
     version: devel
-  romea_core/romea_imu:
+  romea_core/romea_rtls:
     type: git
-    url: git@gitlab-ssh.irstea.fr:romea_core/romea_imu.git
+    url: git@gitlab-ssh.irstea.fr:romea_core/romea_rtls.git
     version: devel
 
   romea_ros2/tools/romea_common:
     type: git
     url: git@gitlab-ssh.irstea.fr:romea_ros2/tools/romea_common.git
     version: devel
-  romea_ros2/interfaces/sensors/romea_imu:
+  romea_ros2/interfaces/sensors/romea_rtls:
     type: git
-    url: git@gitlab-ssh.irstea.fr:romea_ros2/interfaces/sensors/romea_imu.git
+    url: git@gitlab-ssh.irstea.fr:romea_ros2/interfaces/sensors/romea_rtls.git
     version: devel
