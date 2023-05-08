@@ -12,8 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-
 #ifndef ROMEA_RTLS_TRANSCEIVER_UTILS__TRANSCEIVER_INTERFACE_SERVER_HPP_
 #define ROMEA_RTLS_TRANSCEIVER_UTILS__TRANSCEIVER_INTERFACE_SERVER_HPP_
 
