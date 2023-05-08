@@ -22,8 +22,7 @@ from ament_index_python import get_package_prefix
 import xml.etree.ElementTree as ET
 
 
-
-pytest.fixture(scope="module")
+@pytest.fixture(scope="module")
 def urdf():
 
     exe = (

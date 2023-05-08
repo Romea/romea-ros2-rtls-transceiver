@@ -13,14 +13,12 @@
 # limitations under the License.
 
 
-
 import pytest
 import xml.etree.ElementTree as ET
 from romea_rtls_transceiver_description import transceiver_urdf
 
 
-
-pytest.fixture(scope="module")
+@pytest.fixture(scope="module")
 def urdf_xml():
     prefix = "robot_"
     name = "transceiver0"
