@@ -12,7 +12,7 @@ repositories:
     type: git
     url: git@gitlab-ssh.irstea.fr:romea_ros2/tools/romea_common.git
     version: devel
-  romea_ros2/interfaces/sensors/romea_rtls:
+  romea_ros2/interfaces/sensors/romea_rtls_transceiver:
     type: git
-    url: git@gitlab-ssh.irstea.fr:romea_ros2/interfaces/sensors/romea_rtls.git
+    url: git@gitlab-ssh.irstea.fr:romea_ros2/interfaces/sensors/romea_rtls_transceiver.git
     version: devel
