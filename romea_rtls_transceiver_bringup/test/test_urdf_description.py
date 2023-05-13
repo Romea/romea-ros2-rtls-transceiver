@@ -36,6 +36,7 @@ def urdf():
         subprocess.check_output(
             [
                 exe,
+                "mode:simulation",
                 "robot_namespace:robot",
                 "meta_description_file_path:" + meta_description_file_path,
             ],

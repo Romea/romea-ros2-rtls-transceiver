@@ -28,6 +28,7 @@ if __name__ == "__main__":
         name, value = argument.split(":")
         parameters[name] = value
 
+    mode = parameters["mode"]
     robot_namespace = parameters["robot_namespace"]
     meta_description_file_path = parameters["meta_description_file_path"]
-    print(urdf_description(robot_namespace, meta_description_file_path))
+    print(urdf_description(robot_namespace, mode, meta_description_file_path))

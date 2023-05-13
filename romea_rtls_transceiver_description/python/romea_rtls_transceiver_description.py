@@ -18,7 +18,10 @@ import xacro
 from ament_index_python.packages import get_package_share_directory
 
 
-def transceiver_urdf(prefix, name, type, configuration, pan_id, id, mode, parent_link, xyz, ros_namespace):
+def transceiver_urdf(
+        prefix, mode, name,
+        type, configuration, pan_id, id, control_mode,
+        parent_link, xyz, ros_namespace):
 
     xacro_file = (
         get_package_share_directory("romea_rtls_transceiver_description")
@@ -33,8 +36,9 @@ def transceiver_urdf(prefix, name, type, configuration, pan_id, id, mode, parent
         xacro_file,
         mappings={
             "prefix": prefix,
-            "name": name,
             "mode": mode,
+            "name": name,
+            "control_mode": control_mode,
             "pan_id": str(pan_id),
             "id": str(id),
             "parent_link": parent_link,

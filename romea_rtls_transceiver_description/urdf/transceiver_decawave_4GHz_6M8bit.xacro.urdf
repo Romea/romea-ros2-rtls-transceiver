@@ -2,10 +2,11 @@
 <robot name="transceiver" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
   <xacro:arg name="prefix" default="" />
+  <xacro:arg name="mode" default="simulation_gazebo" />
   <xacro:arg name="name" default="transceiver" />
   <xacro:arg name="id" default="0" />
   <xacro:arg name="pan_id" default="0" />
-  <xacro:arg name="mode" default="connected" />
+  <xacro:arg name="control_mode" default="connected" />
   <xacro:arg name="parent_link" default="base_link" />
   <xacro:arg name="xyz" default="0.0 0.0 0.0" />
   <xacro:arg name="ros_namespace" default="/" />
@@ -14,6 +15,7 @@
 
   <xacro:transceiver
     prefix="$(arg prefix)"
+    mode="$(arg mode)"
     name="$(arg name)"
     xyz="$(arg xyz)"
     type="decawave"
@@ -21,7 +23,7 @@
     parent_link="$(arg parent_link)"
     pan_id="$(arg pan_id)"
     id="$(arg id)"
-    mode="$(arg mode)"
+    control_mode="$(arg control_mode)"
     ros_namespace="$(arg ros_namespace)" />
 
 </robot>

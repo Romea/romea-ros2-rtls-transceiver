@@ -21,17 +21,18 @@ from romea_rtls_transceiver_description import transceiver_urdf
 @pytest.fixture(scope="module")
 def urdf_xml():
     prefix = "robot_"
+    mode = "simulation"
     name = "transceiver0"
     type = "decawave"
     conf = "4GHz_6M8bit"
-    mode = "10"
+    control_mode = "connected"
     pan_id = "0"
     id = "0 "
     parent_link = "base_link"
     xyz = [1.0, 2.0, 3.0]
     ros_namespace = "ns"
-    return ET.fromstring(transceiver_urdf(prefix, name,
-                                          type, conf, pan_id, id, mode,
+    return ET.fromstring(transceiver_urdf(prefix, mode, name,
+                                          type, conf, pan_id, id, control_mode,
                                           parent_link, xyz,
                                           ros_namespace))
 
