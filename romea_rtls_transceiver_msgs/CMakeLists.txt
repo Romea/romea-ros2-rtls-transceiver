@@ -20,14 +20,10 @@ find_package(geometry_msgs REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
     action/Ranging.action
     msg/Payload.msg
-    msg/Poll.msg
-    msg/Range.msg
     msg/RangingResult.msg
     msg/TransceiverEUID.msg
-    msg/Transceivers.msg
     srv/GetPayload.srv
     srv/SetPayload.srv
-    srv/SetTransceiversConfiguration.srv
     DEPENDENCIES std_msgs geometry_msgs)
 
 

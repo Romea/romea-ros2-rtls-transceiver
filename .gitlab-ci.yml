@@ -29,7 +29,7 @@ galactic_focal_build:
   script:
     - colcon build
     - source install/setup.bash
-    - colcon test --packages-select romea_rtls_transceiver_bringup romea_rtls_transceiver_description romea_rtls_transceiver_hub romea_rtls_transceiver_utils
+    - colcon test --packages-select romea_rtls_transceiver_bringup romea_rtls_transceiver_description romea_rtls_transceiver_utils
     - colcon test-result --verbose
 
 # humble
@@ -39,5 +39,5 @@ humble_jammy_build:
   script:
     - colcon build
     - source install/setup.bash
-    - colcon test --packages-select romea_rtls_transceiver_bringup romea_rtls_transceiver_description romea_rtls_transceiver_hub romea_rtls_transceiver_utils
+    - colcon test --packages-select romea_rtls_transceiver_bringup romea_rtls_transceiver_description romea_rtls_transceiver_utils
     - colcon test-result --verbose

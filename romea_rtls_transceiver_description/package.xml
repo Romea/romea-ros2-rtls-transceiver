@@ -4,11 +4,11 @@
 
   <name>romea_rtls_transceiver_description</name>
   <version>0.0.0</version>
-  <description>Package with URDF and description files of rtls transceivers.</description>
+  <description>Package containing URDF and description files of rtls transceivers.</description>
 
   <maintainer email="jean.laneurit@inrae.fr">Jean Laneurit</maintainer>
 
-  <license>TODO</license>
+  <license>Apache License 2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 

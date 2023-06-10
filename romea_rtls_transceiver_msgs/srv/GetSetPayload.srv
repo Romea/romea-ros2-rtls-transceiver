@@ -1,4 +1,0 @@
-uint8[] in_payload
----
-bool 
-uint8[] out_payload
