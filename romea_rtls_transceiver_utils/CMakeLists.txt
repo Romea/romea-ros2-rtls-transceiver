@@ -22,7 +22,7 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(romea_core_common REQUIRED)
-find_package(romea_core_rtls REQUIRED)
+find_package(romea_core_rtls_transceiver REQUIRED)
 find_package(romea_common_utils REQUIRED)
 find_package(romea_rtls_transceiver_msgs REQUIRED)
 
@@ -38,7 +38,7 @@ ament_target_dependencies(${PROJECT_NAME}
   std_msgs
   geometry_msgs
   romea_core_common
-  romea_core_rtls
+  romea_core_rtls_transceiver
   romea_common_utils
   romea_rtls_transceiver_msgs)
 

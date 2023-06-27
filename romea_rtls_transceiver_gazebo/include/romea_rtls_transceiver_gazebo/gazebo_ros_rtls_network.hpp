@@ -20,7 +20,7 @@
 #include <map>
 
 // romea
-#include "romea_core_rtls/RTLSTransceiverEUID.hpp"
+#include "romea_core_rtls_transceiver/RTLSTransceiverEUID.hpp"
 #include "romea_rtls_transceiver_msgs/msg/ranging_result.hpp"
 
 // local

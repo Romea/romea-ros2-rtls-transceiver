@@ -67,7 +67,7 @@ def launch_setup(context, *args, **kwargs):
 
     # Add data processing algorithm here if needed
 
-    return GroupAction([driver])
+    return [driver]
 
 
 def generate_launch_description():

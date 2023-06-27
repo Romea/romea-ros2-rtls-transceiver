@@ -27,7 +27,7 @@
 
 
 // romea
-#include "romea_core_rtls/RTLSRangeRandomNoise.hpp"
+#include "romea_core_rtls_transceiver/RTLSRangeRandomNoise.hpp"
 
 // local
 #include "romea_rtls_transceiver_gazebo/gazebo_ros_rtls_network.hpp"

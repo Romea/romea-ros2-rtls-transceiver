@@ -23,14 +23,14 @@ namespace romea
 {
 
 void to_romea(
-  const romea_rtls_transceiver_msgs::msg::RangingResult ranging_result,
-  RTLSRange & romea_range)
+  const romea_rtls_transceiver_msgs::msg::RangingResult ranging_result_msg,
+  RTLSRangeRangingResult & romea_ranging_result)
 {
-  auto ros_time = rclcpp::Time(ranging_result.stamp.sec, ranging_result.stamp.nanosec);
-  romea_range.duration = to_romea_duration(ros_time);
-  romea_range.range = ranging_result.range;
-  romea_range.firstPathRxPowerLevel = ranging_result.first_path_rx_power_level;
-  romea_range.totalRxPowerLevel = ranging_result.total_rx_power_level;
+  auto ros_time = rclcpp::Time(ranging_result_msg.stamp.sec, ranging_result_msg.stamp.nanosec);
+  romea_ranging_result.duration = to_romea_duration(ros_time);
+  romea_ranging_result.range = ranging_result_msg.range;
+  romea_ranging_result.firstPathRxPowerLevel = ranging_result_msg.first_path_rx_power_level;
+  romea_ranging_result.totalRxPowerLevel = ranging_result_msg.total_rx_power_level;
 }
 
 void to_romea(

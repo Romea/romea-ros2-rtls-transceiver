@@ -26,9 +26,8 @@
 #include "rclcpp_action/rclcpp_action.hpp"
 
 // romea core
-#include "romea_core_rtls/RTLSRange.hpp"
-#include "romea_core_rtls/RTLSTransceiverEUID.hpp"
-#include "romea_core_rtls/RTLSTransceiverFunction.hpp"
+#include "romea_core_rtls_transceiver/RTLSTransceiverEUID.hpp"
+#include "romea_core_rtls_transceiver/RTLSTransceiverFunction.hpp"
 
 // romea ros
 #include "romea_rtls_transceiver_msgs/action/ranging.hpp"

@@ -20,8 +20,8 @@
 #include <string>
 
 // romea core
-#include "romea_core_rtls/RTLSRange.hpp"
-#include "romea_core_rtls/RTLSTransceiverEUID.hpp"
+#include "romea_core_rtls/transceiver/RTLSRangeRangingResult.hpp"
+#include "romea_core_rtls/transceiver/RTLSTransceiverEUID.hpp"
 
 // romea ros
 #include "romea_rtls_transceiver_msgs/msg/ranging_result.hpp"
@@ -33,7 +33,7 @@ namespace romea
 
 void to_romea(
   const romea_rtls_transceiver_msgs::msg::RangingResult ranging_result_msg,
-  RTLSRange & romea_range);
+  RTLSRangeRangingResult & romea_ranging_result);
 
 void to_romea(
   const romea_rtls_transceiver_msgs::msg::TransceiverEUID transceiver_euid_msg,
