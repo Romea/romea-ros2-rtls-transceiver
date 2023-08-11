@@ -19,60 +19,53 @@
 #include "gtest/gtest.h"
 
 // local
-#include "romea_gps_utils/gps_data_conversions.hpp"
+#include "romea_rtls_transceiver_utils/rtls_transceiver_parameters.hpp"
 
+#include "../test/test_helper.h"
 
-//-----------------------------------------------------------------------------
-TEST(TestGPSDataConversions, to_nmea_msg)
+class TestTransceiverParameters : public ::testing::Test
 {
-  nmea_msgs::msg::Sentence msg;
-  std::string frame_id = "foo";
-  std::string sentence = "bar";
-  rclcpp::Time stamp(1, 2);
+protected:
+  static void SetUpTestCase()
+  {
+    rclcpp::init(0, nullptr);
+  }
 
-  romea::to_ros_msg(stamp, frame_id, sentence, msg);
+  static void TearDownTestCase()
+  {
+    rclcpp::shutdown();
+  }
 
-  EXPECT_STREQ(msg.sentence.c_str(), sentence.c_str());
-  EXPECT_STREQ(msg.header.frame_id.c_str(), frame_id.c_str());
-  EXPECT_EQ(msg.header.stamp.sec, 1);
-  EXPECT_EQ(msg.header.stamp.nanosec, 2u);
+  void SetUp() override
+  {
+    rclcpp::NodeOptions no;
+
+    no.arguments(
+      {"--ros-args",
+        "--params-file",
+        std::string(TEST_DIR) + "/test_transceiver_parameters.yaml"});
+
+    node = std::make_shared<rclcpp::Node>("test_transceiver_parameters", "ns", no);
+  }
+
+  std::shared_ptr<rclcpp::Node> node;
+};
+
+TEST_F(TestTransceiverParameters, getId) {
+  romea::declare_transceiver_id(node);
+  EXPECT_EQ(romea::get_transceiver_id(node), 0);
 }
 
-//-----------------------------------------------------------------------------
-TEST(TestGPSDataConversions, to_navsat_fix_msg)
-{
-  sensor_msgs::msg::NavSatFix msg;
-  rclcpp::Time stamp(1, 2);
-  std::string frame_id = "foo";
-  romea::GGAFrame frame;
-  frame.latitude = romea::Latitude(45 / 180. * M_PI);
-  frame.longitude = romea::Longitude(3 / 180. * M_PI);
-  frame.altitudeAboveGeoid = 50.0;
-  frame.geoidHeight = 350.0;
-  frame.horizontalDilutionOfPrecision = 2.0;
-  frame.talkerId = romea::TalkerId::GP;
-  frame.fixQuality = romea::FixQuality::RTK_FIX;
-
-
-  romea::to_ros_msg(stamp, frame_id, frame, msg);
-
-  EXPECT_DOUBLE_EQ(msg.latitude, 45.);
-  EXPECT_DOUBLE_EQ(msg.longitude, 3.);
-  EXPECT_DOUBLE_EQ(msg.altitude, 400.0);
-
-  EXPECT_EQ(
-    msg.position_covariance_type,
-    sensor_msgs::msg::NavSatFix::COVARIANCE_TYPE_APPROXIMATED);
-  EXPECT_DOUBLE_EQ(msg.position_covariance[0], 0.0036);
-  EXPECT_DOUBLE_EQ(msg.position_covariance[0], 0.0036);
-
-  EXPECT_EQ(msg.status.service, sensor_msgs::msg::NavSatStatus::SERVICE_GPS);
-  EXPECT_EQ(msg.status.status, sensor_msgs::msg::NavSatStatus::STATUS_GBAS_FIX);
-
-  EXPECT_STREQ(msg.header.frame_id.c_str(), frame_id.c_str());
-  EXPECT_EQ(msg.header.stamp.sec, 1);
-  EXPECT_EQ(msg.header.stamp.nanosec, 2u);
+TEST_F(TestTransceiverParameters, getPanId) {
+  romea::declare_transceiver_pan_id(node);
+  EXPECT_EQ(romea::get_transceiver_pan_id(node), 1);
 }
+
+TEST_F(TestTransceiverParameters, getCommunicationConfiguration) {
+  romea::declare_transceiver_communication_configuration(node);
+  EXPECT_STREQ(romea::get_transceiver_communication_configuration(node).c_str(), "foo");
+}
+
 
 //-----------------------------------------------------------------------------
 int main(int argc, char ** argv)

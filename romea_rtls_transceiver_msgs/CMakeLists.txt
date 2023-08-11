@@ -15,15 +15,12 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
-#find_package(action_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
-    action/Ranging.action
     msg/Payload.msg
+    msg/Range.msg
+    msg/RangingRequest.msg
     msg/RangingResult.msg
-    msg/TransceiverEUID.msg
-    srv/GetPayload.srv
-    srv/SetPayload.srv
     DEPENDENCIES std_msgs geometry_msgs)
 
 

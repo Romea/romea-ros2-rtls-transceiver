@@ -1,0 +1,15 @@
+name: "transceiver1"
+namespace: rtls
+driver:
+  pkg: romea_trackbod_driver
+  device: /dev/ttyACM1
+  baudrate: 921600
+configuration:
+  type: decawave
+  communication: 4GHz_6M8bit
+  id: 0
+  pan_id: 2
+  mode: slave
+geometry:
+  parent_link: base_link
+  xyz: [4.0, 5.0, 6.0]

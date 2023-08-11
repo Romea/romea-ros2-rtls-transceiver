@@ -1,0 +1,6 @@
+/**:
+  ros__parameters:
+    transceiver:
+      id: 0
+      pan_id: 1
+      communication: foo

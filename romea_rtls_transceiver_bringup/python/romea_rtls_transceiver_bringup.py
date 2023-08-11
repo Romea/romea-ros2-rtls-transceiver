@@ -19,7 +19,9 @@ import romea_rtls_transceiver_description
 
 class RTLSTransceiverMetaDescription:
     def __init__(self, meta_description_file_path):
-        self.meta_description = MetaDescription("rtls_transceiver", meta_description_file_path)
+        self.meta_description = MetaDescription(
+            "rtls_transceiver", meta_description_file_path
+        )
 
     def get_name(self):
         return self.meta_description.get("name")
@@ -61,14 +63,33 @@ class RTLSTransceiverMetaDescription:
         return self.meta_description.get("xyz", "geometry")
 
 
+def load_meta_description(meta_description_file_path):
+    return RTLSTransceiverMetaDescription(meta_description_file_path)
+
+
+def get_transceivers_names(meta_descriptions):
+    return [meta_description.get_name() for meta_description in meta_descriptions]
+
+
+def get_transceivers_pan_ids(meta_descriptions):
+    return [meta_description.get_pan_id() for meta_description in meta_descriptions]
+
+
+def get_transceivers_ids(meta_descriptions):
+    return [meta_description.get_id() for meta_description in meta_descriptions]
+
+
+def get_transceivers_xyz(meta_descriptions):
+    return [meta_description.get_xyz() for meta_description in meta_descriptions]
+
+
 def urdf_description(robot_namespace, mode, meta_description_file_path):
 
-    meta_description = RTLSTransceiverMetaDescription(meta_description_file_path)
+    meta_description = RTLSTransceiverMetaDescription(
+        meta_description_file_path)
 
     ros_namespace = device_namespace(
-        robot_namespace,
-        meta_description.get_namespace(),
-        meta_description.get_name()
+        robot_namespace, meta_description.get_namespace(), meta_description.get_name()
     )
 
     return romea_rtls_transceiver_description.transceiver_urdf(
@@ -82,5 +103,5 @@ def urdf_description(robot_namespace, mode, meta_description_file_path):
         meta_description.get_mode(),
         meta_description.get_parent_link(),
         meta_description.get_xyz(),
-        ros_namespace
+        ros_namespace,
     )

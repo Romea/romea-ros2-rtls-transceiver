@@ -43,7 +43,7 @@ public:
   /// Inherited
   void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) override;
 
-  std::optional<double> ComputeRange(const GazeboRosRTLSTransceiver * responder);
+  // std::optional<double> ComputeRange(const GazeboRosRTLSTransceiver * responder);
 
 private:
   std::unique_ptr<GazeboRosRTLSTransceiverPrivate> impl_;

@@ -20,13 +20,13 @@
 #include "romea_common_utils/params/eigen_parameters.hpp"
 
 // local
-#include "romea_rtls_transceiver_utils/transceiver_parameters.hpp"
+#include "romea_rtls_transceiver_utils/rtls_transceiver_parameters.hpp"
 
 namespace
 {
 const char id_param_name[] = "transceiver.id";
 const char pan_id_param_name[] = "transceiver.pan_id";
-const char communication_param_name[] = "communication";
+const char communication_param_name[] = "transceiver.communication";
 }
 
 namespace romea
@@ -35,17 +35,17 @@ namespace romea
 //-----------------------------------------------------------------------------
 void declare_transceiver_id(rclcpp::Node::SharedPtr node)
 {
-  declare_parameter<int>(node, id_param_name);
+  declare_parameter<int64_t>(node, id_param_name);
 }
 
 //-----------------------------------------------------------------------------
 void declare_transceiver_pan_id(rclcpp::Node::SharedPtr node)
 {
-  declare_parameter<int>(node, pan_id_param_name);
+  declare_parameter<int64_t>(node, pan_id_param_name);
 }
 
 //-----------------------------------------------------------------------------
-void declare_transceiver_communication(rclcpp::Node::SharedPtr node)
+void declare_transceiver_communication_configuration(rclcpp::Node::SharedPtr node)
 {
   declare_parameter<std::string>(node, communication_param_name);
 }
@@ -57,22 +57,26 @@ void declare_transceiver_communication(rclcpp::Node::SharedPtr node)
 // }
 
 //-----------------------------------------------------------------------------
-double get_transceiver_id(rclcpp::Node::SharedPtr node)
+uint16_t get_transceiver_id(rclcpp::Node::SharedPtr node)
 {
-  return get_parameter<double>(node, id_param_name);
+  auto int64_id = get_parameter<int64_t>(node, id_param_name);
+  assert(int64_id >= 0 && int64_id <= std::numeric_limits<uint16_t>::max());
+  return int64_id;
 }
 
 
 //-----------------------------------------------------------------------------
-double get_transceiver_pan_id(rclcpp::Node::SharedPtr node)
+uint16_t get_transceiver_pan_id(rclcpp::Node::SharedPtr node)
 {
-  return get_parameter<double>(node, pan_id_param_name);
+  auto int64_pan_id = get_parameter<int64_t>(node, pan_id_param_name);
+  assert(int64_pan_id >= 0 && int64_pan_id <= std::numeric_limits<uint16_t>::max());
+  return int64_pan_id;
 }
 
 //-----------------------------------------------------------------------------
-double get_transceiver_communication(rclcpp::Node::SharedPtr node)
+std::string get_transceiver_communication_configuration(rclcpp::Node::SharedPtr node)
 {
-  return get_parameter<double>(node, communication_param_name);
+  return get_parameter<std::string>(node, communication_param_name);
 }
 
 // //-----------------------------------------------------------------------------

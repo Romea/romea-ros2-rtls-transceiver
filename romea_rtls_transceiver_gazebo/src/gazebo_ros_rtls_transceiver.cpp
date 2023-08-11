@@ -28,12 +28,10 @@
 
 // romea
 #include "romea_core_rtls_transceiver/RTLSRangeRandomNoise.hpp"
+#include "romea_rtls_transceiver_utils/rtls_transceiver_interface_server.hpp"
 
 // local
-#include "romea_rtls_transceiver_gazebo/gazebo_ros_rtls_network.hpp"
 #include "romea_rtls_transceiver_gazebo/gazebo_ros_rtls_transceiver.hpp"
-#include "romea_rtls_transceiver_gazebo/gazebo_ros_rtls_transceiver_interface.hpp"
-
 
 namespace gazebo
 {
@@ -44,11 +42,20 @@ public:
   /// A pointer to the Link, where force is applied
   gazebo::physics::LinkPtr link;
 
-  /// ros action and service interfaces
-  std::unique_ptr<GazeboRosRTLSTransceiverInterface> ros_interface;
+  /// ros node
+  std::shared_ptr<rclcpp::Node> node;
 
-  /// position according link
+  /// ros interface
+  // std::shared_ptr<GazeboRosRTLSTransceiverInterface> ros_interface;
+
+  /// ros interface server
+  std::shared_ptr<romea::RTLSTransceiverInterfaceServer> ros_interface_server;
+
+  /// body position according parent link
   ignition::math::Vector3d position;
+
+  ///  transceiver idientifier
+  romea::RTLSTransceiverEUID euid;
 
   /// ranging noise characteristics
   romea::RTLSRangeRandomNoise range_noise;
@@ -59,10 +66,44 @@ public:
   /// maxiimal distance for range
   double maximal_range;
 
+  /// payload send by user
+  std::vector<uint8_t> payload;
+
+
   ignition::math::Vector3d compute_world_position() const;
   bool is_available_range(const double & range)const;
   double compute_noised_range(const double & range);
+
+  void process_request(romea_rtls_transceiver_msgs::msg::RangingRequest::ConstSharedPtr msg);
+  void send_result(const uint16_t & responder_id, const double & range);
+  void send_payload(const std::vector<uint8_t> payload);
 };
+
+class GazeboRosRTLSNetwork
+{
+public:
+  // delete copy and move constructors and assign operators
+  GazeboRosRTLSNetwork(GazeboRosRTLSNetwork const &) = delete;             // Copy construct
+  GazeboRosRTLSNetwork(GazeboRosRTLSNetwork &&) = delete;                  // Move construct
+  GazeboRosRTLSNetwork & operator=(GazeboRosRTLSNetwork const &) = delete;  // Copy assign
+  GazeboRosRTLSNetwork & operator=(GazeboRosRTLSNetwork &&) = delete;      // Move assign
+
+protected:
+  GazeboRosRTLSNetwork();
+
+public:
+  static GazeboRosRTLSNetwork & Instance();
+
+  void add_transceiver(GazeboRosRTLSTransceiverPrivate * transceiver);
+
+  void ranging(
+    romea::RTLSTransceiverEUID initiator_euid,
+    romea::RTLSTransceiverEUID responder_euid);
+
+private:
+  std::map<romea::RTLSTransceiverEUID, GazeboRosRTLSTransceiverPrivate *> transceivers_;
+};
+
 
 //-----------------------------------------------------------------------------
 GazeboRosRTLSTransceiver::GazeboRosRTLSTransceiver()
@@ -160,45 +201,26 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
     gzthrow("Rtls transceiver noise_a not found in sdf");
   }
 
-  romea::RTLSTransceiverEUID transceiver_euid;
-  transceiver_euid.pan_id = static_cast<uint16_t>(transceiver_pan_id);
-  transceiver_euid.id = static_cast<uint16_t>(transceiver_id);
-
   impl_->range_noise = romea::RTLSRangeRandomNoise(noise_a, noise_b);
+  impl_->euid.pan_id = static_cast<uint16_t>(transceiver_pan_id);
+  impl_->euid.id = static_cast<uint16_t>(transceiver_id);
 
   // std::cout << " transceiver_name " << transceiver_name << std::endl;
   // std::cout << " transceiver_pand_id " << transceiver_pan_id << std::endl;
   // std::cout << " transceiver_id " << transceiver_id << std::endl;
 
   if (mode != "standalone") {
-    impl_->ros_interface = std::make_unique<GazeboRosRTLSTransceiverInterface>(
-      gazebo_ros::Node::Get(_sdf), transceiver_euid);
+    impl_->node = gazebo_ros::Node::Get(_sdf);
+
+    romea::RTLSTransceiverInterfaceServer::RangingRequestCallback request_callback = std::bind(
+      &GazeboRosRTLSTransceiverPrivate::process_request, impl_.get(), std::placeholders::_1);
+
+    using ROSInterfaceServer = romea::RTLSTransceiverInterfaceServer;
+    impl_->ros_interface_server = std::make_shared<ROSInterfaceServer>(
+      impl_->node, request_callback);
   }
 
-  GazeboRosRTLSNetwork::Instance().add_transceiver(transceiver_euid, this);
-}
-
-//-----------------------------------------------------------------------------
-std::optional<double> GazeboRosRTLSTransceiver::ComputeRange(
-  const GazeboRosRTLSTransceiver * responder)
-{
-  ignition::math::Vector3d initiator_position =
-    this->impl_->compute_world_position();
-  ignition::math::Vector3d responder_position =
-    responder->impl_->compute_world_position();
-  double distance = initiator_position.Distance(responder_position);
-
-  if (this->impl_->is_available_range(distance) &&
-    responder->impl_->is_available_range(distance))
-  {
-    if (responder->impl_->ros_interface != nullptr) {
-      this->impl_->ros_interface->exchange_payloads(
-        *responder->impl_->ros_interface);
-    }
-    return this->impl_->compute_noised_range(distance);
-  } else {
-    return {};
-  }
+  GazeboRosRTLSNetwork::Instance().add_transceiver(impl_.get());
 }
 
 //-----------------------------------------------------------------------------
@@ -223,6 +245,91 @@ bool GazeboRosRTLSTransceiverPrivate::is_available_range(const double & range)co
 {
   return range >= minimal_range && range <= maximal_range;
 }
+
+//-----------------------------------------------------------------------------
+void GazeboRosRTLSTransceiverPrivate::send_result(
+  const uint16_t & responder_id,
+  const double & range)
+{
+  romea_rtls_transceiver_msgs::msg::RangingResult result_msg;
+  result_msg.initiator_id = euid.id;
+  result_msg.responder_id = responder_id;
+  result_msg.range.stamp = node->get_clock()->now();
+  result_msg.range.range = range;
+  result_msg.range.total_rx_power_level = 255;
+  result_msg.range.first_path_rx_power_level = 255;
+  ros_interface_server->send_ranging_result(result_msg);
+  // TODO(Jean) simulate channel transmission
+  // TODO(Jean) simulate power loss
+}
+
+//-----------------------------------------------------------------------------
+void GazeboRosRTLSTransceiverPrivate::send_payload(const std::vector<uint8_t> payload)
+{
+  romea_rtls_transceiver_msgs::msg::Payload payload_msg;
+  payload_msg.data = payload;
+  ros_interface_server->send_payload(payload_msg);
+}
+
+//-----------------------------------------------------------------------------
+void GazeboRosRTLSTransceiverPrivate::process_request(
+  romea_rtls_transceiver_msgs::msg::RangingRequest::ConstSharedPtr msg)
+{
+  payload = msg->payload.data;
+  if (msg->responder_id != std::numeric_limits<uint16_t>::max()) {
+    GazeboRosRTLSNetwork::Instance().ranging(euid, {euid.pan_id, msg->responder_id});
+    payload.clear();
+  }
+}
+
+//-----------------------------------------------------------------------------
+GazeboRosRTLSNetwork & GazeboRosRTLSNetwork::Instance()
+{
+  static GazeboRosRTLSNetwork myInstance;
+  return myInstance;
+}
+
+//-----------------------------------------------------------------------------
+GazeboRosRTLSNetwork::GazeboRosRTLSNetwork()
+{
+}
+
+//-----------------------------------------------------------------------------
+void GazeboRosRTLSNetwork::add_transceiver(GazeboRosRTLSTransceiverPrivate * transceiver)
+{
+  transceivers_[transceiver->euid] = transceiver;
+}
+
+//-----------------------------------------------------------------------------
+void GazeboRosRTLSNetwork::ranging(
+  romea::RTLSTransceiverEUID initiator_euid,
+  romea::RTLSTransceiverEUID responder_euid)
+{
+  GazeboRosRTLSTransceiverPrivate * initiator = transceivers_[initiator_euid];
+  GazeboRosRTLSTransceiverPrivate * responder = transceivers_[responder_euid];
+
+  if (responder != nullptr && initiator != nullptr) {
+    auto initiator_position = initiator->compute_world_position();
+    auto responder_position = responder->compute_world_position();
+    double distance = initiator_position.Distance(responder_position);
+    double range = initiator->compute_noised_range(distance);
+
+    if (initiator->is_available_range(range)) {
+      initiator->send_result(responder_euid.id, range);
+
+      if (!responder->payload.empty()) {
+        initiator->send_payload(responder->payload);
+        responder->payload.clear();
+      }
+
+      if (!initiator->payload.empty()) {
+        responder->send_payload(initiator->payload);
+        initiator->payload.clear();
+      }
+    }
+  }
+}
+
 
 // Register this sensor with the simulator
 GZ_REGISTER_MODEL_PLUGIN(GazeboRosRTLSTransceiver)

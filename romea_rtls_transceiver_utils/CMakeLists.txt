@@ -28,10 +28,11 @@ find_package(romea_rtls_transceiver_msgs REQUIRED)
 
 
 add_library(${PROJECT_NAME} SHARED
-  # src/rtls_conversions.cpp
-  src/transceiver_interface_client.cpp
-  src/transceiver_interface_server.cpp
-  src/transceiver_parameters.cpp)
+  src/rtls_transceiver_data_conversions.cpp
+  src/rtls_transceiver_interface_client.cpp
+  src/rtls_transceiver_interface_server.cpp
+  src/rtls_transceiver_interface.cpp
+  src/rtls_transceiver_parameters.cpp)
 
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
@@ -50,7 +51,7 @@ ament_export_dependencies(rclcpp)
 ament_export_dependencies(std_msgs)
 ament_export_dependencies(geometry_msgs)
 ament_export_dependencies(romea_core_common)
-ament_export_dependencies(romea_core_rtls)
+ament_export_dependencies(romea_core_rtls_transceiver)
 ament_export_dependencies(romea_common_utils)
 ament_export_dependencies(romea_rtls_transceiver_msgs)
 

@@ -1,4 +1,4 @@
-name: "transceiver"
+name: "transceiver0"
 namespace: rtls
 driver:
   pkg: romea_trackbod_driver

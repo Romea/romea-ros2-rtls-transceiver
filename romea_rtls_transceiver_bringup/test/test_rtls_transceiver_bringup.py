@@ -16,17 +16,39 @@
 import os
 import pytest
 
-from romea_rtls_transceiver_bringup import RTLSTransceiverMetaDescription
+from romea_rtls_transceiver_bringup import (
+    RTLSTransceiverMetaDescription,
+    get_transceivers_names,
+    get_transceivers_pan_ids,
+    get_transceivers_ids,
+    get_transceivers_xyz
+)
 
 
 @pytest.fixture(scope="module")
 def meta_description():
-    meta_description_file_path = os.path.join(os.getcwd(), "test_rtls_transceiver_bringup.yaml")
+    meta_description_file_path = os.path.join(
+        os.getcwd(), "test_rtls_transceiver_bringup_tag0.yaml")
     return RTLSTransceiverMetaDescription(meta_description_file_path)
 
 
+@pytest.fixture(scope="module")
+def meta_descriptions():
+
+    meta_description_file_path0 = os.path.join(
+        os.getcwd(), "test_rtls_transceiver_bringup_tag0.yaml")
+
+    meta_description_file_path1 = os.path.join(
+        os.getcwd(), "test_rtls_transceiver_bringup_tag1.yaml")
+
+    return [
+        RTLSTransceiverMetaDescription(meta_description_file_path0),
+        RTLSTransceiverMetaDescription(meta_description_file_path1)
+    ]
+
+
 def test_get_name(meta_description):
-    assert meta_description.get_name() == "transceiver"
+    assert meta_description.get_name() == "transceiver0"
 
 
 def test_get_namespace(meta_description):
@@ -75,3 +97,27 @@ def test_get_parent_link(meta_description):
 
 def test_get_xyz(meta_description):
     assert meta_description.get_xyz() == [1.0, 2.0, 3.0]
+
+
+def test_get_transceivers_names(meta_descriptions):
+    transceivers_names = get_transceivers_names(meta_descriptions)
+    transceivers_names[0] == "transceiver0"
+    transceivers_names[1] == "transceiver1"
+
+
+def test_get_pand_ids(meta_descriptions):
+    transceivers_pan_ids = get_transceivers_pan_ids(meta_descriptions)
+    transceivers_pan_ids[0] == 0
+    transceivers_pan_ids[1] == 0
+
+
+def test_get_transceivers_ids(meta_descriptions):
+    transceivers_ids = get_transceivers_ids(meta_descriptions)
+    transceivers_ids[0] == 1
+    transceivers_ids[1] == 2
+
+
+def test_get_transceivers_xyz(meta_descriptions):
+    transceivers_xyz = get_transceivers_xyz(meta_descriptions)
+    transceivers_xyz[0] == [1.0, 2.0, 3.0]
+    transceivers_xyz[1] == [4.0, 5.0, 6.0]

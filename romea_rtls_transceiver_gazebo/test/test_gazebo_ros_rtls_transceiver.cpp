@@ -26,7 +26,7 @@
 #include "rclcpp/rclcpp.hpp"
 
 // romea
-#include "romea_rtls_transceiver_utils/transceiver_interface_client.hpp"
+#include "romea_rtls_transceiver_utils/rtls_transceiver_interface_client.hpp"
 
 // local
 #include "../test/test_helper.h"
@@ -44,17 +44,36 @@ public:
     this->Load(world_name, true);
 
     node_transceiver0_client = std::make_shared<rclcpp::Node>("node_transceiver0_client");
-    transceiver0_client = std::make_shared<romea::TransceiverInterfaceClient>(
-      node_transceiver0_client, "transceiver0");
+
+    auto node_transceiver0_range_callback = std::bind(
+      &GazeboRosRTLSTransceiverTest::transceiver0_range_callback, this, std::placeholders::_1);
+    auto node_transceiver0_payload_callback = std::bind(
+      &GazeboRosRTLSTransceiverTest::transceiver0_payload_callback, this, std::placeholders::_1);
+
+    transceiver0_client = std::make_shared<romea::RTLSTransceiverInterfaceClient>(
+      node_transceiver0_client, "transceiver0",
+      node_transceiver0_range_callback,
+      node_transceiver0_payload_callback);
 
     node_transceiver2_client = std::make_shared<rclcpp::Node>("node_transceiver2_client");
-    transceiver2_client = std::make_shared<romea::TransceiverInterfaceClient>(
-      node_transceiver2_client, "transceiver2");
 
+    auto node_transceiver2_range_callback = std::bind(
+      &GazeboRosRTLSTransceiverTest::transceiver2_range_callback, this, std::placeholders::_1);
+    auto node_transceiver2_payload_callback = std::bind(
+      &GazeboRosRTLSTransceiverTest::transceiver2_payload_callback, this, std::placeholders::_1);
+
+    transceiver2_client = std::make_shared<romea::RTLSTransceiverInterfaceClient>(
+      node_transceiver2_client, "transceiver2",
+      node_transceiver2_range_callback,
+      node_transceiver2_payload_callback);
+
+    range = 0;
     executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
     executor->add_node(node_transceiver0_client);
     executor->add_node(node_transceiver2_client);
     executor_thread = std::thread([this]() {this->executor->spin();});
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));
   }
 
   void TearDown() override
@@ -69,11 +88,39 @@ public:
     this->Unload();
   }
 
+  void transceiver0_range_callback(
+    romea::RTLSTransceiverInterfaceClient::RangingResult::ConstSharedPtr msg)
+  {
+    range = msg->range.range;
+  }
+
+  void transceiver2_range_callback(
+    romea::RTLSTransceiverInterfaceClient::RangingResult::ConstSharedPtr msg)
+  {
+    range = msg->range.range;
+  }
+
+  void transceiver0_payload_callback(
+    romea::RTLSTransceiverInterfaceClient::Payload::ConstSharedPtr msg)
+  {
+    sended_transceiver0_payload = msg->data;
+  }
+
+  void transceiver2_payload_callback(
+    romea::RTLSTransceiverInterfaceClient::Payload::ConstSharedPtr msg)
+  {
+    sended_transceiver2_payload = msg->data;
+  }
 
   std::shared_ptr<rclcpp::Node> node_transceiver0_client;
-  std::shared_ptr<romea::TransceiverInterfaceClient> transceiver0_client;
+  std::shared_ptr<romea::RTLSTransceiverInterfaceClient> transceiver0_client;
+  std::vector<uint8_t> sended_transceiver0_payload;
+
   std::shared_ptr<rclcpp::Node> node_transceiver2_client;
-  std::shared_ptr<romea::TransceiverInterfaceClient> transceiver2_client;
+  std::shared_ptr<romea::RTLSTransceiverInterfaceClient> transceiver2_client;
+  std::vector<uint8_t> sended_transceiver2_payload;
+
+  double range;
 
   std::shared_ptr<rclcpp::Executor> executor;
   std::thread executor_thread;
@@ -81,41 +128,60 @@ public:
 
 TEST_F(GazeboRosRTLSTransceiverTest, checkRangeWithNoPayloadExchange)
 {
-  romea::TransceiverInterfaceClient::RangingResult result;
-  romea::TransceiverInterfaceClient::Payload transceiver0_payload;
-  EXPECT_TRUE(transceiver0_client->ranging(1, result, std::chrono::seconds(1)));
-  EXPECT_TRUE(transceiver0_client->get_payload(transceiver0_payload));
-  EXPECT_EQ(transceiver0_payload.data.size(), 0u);
+  romea::RTLSTransceiverInterfaceClient::RangingRequest request;
+  request.responder_id = 1;
+  request.timeout = 0.1;
+  transceiver0_client->send_ranging_request(request);
+  std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  EXPECT_NEAR(range, 10.0, 0.01);
+  EXPECT_EQ(sended_transceiver0_payload.size(), 0u);
+  EXPECT_EQ(sended_transceiver2_payload.size(), 0u);
 }
 
 TEST_F(GazeboRosRTLSTransceiverTest, checkRangeWithPayloadExchange)
 {
-  romea::TransceiverInterfaceClient::Payload transceiver0_payload;
-  romea::TransceiverInterfaceClient::Payload transceiver2_payload;
+  romea::RTLSTransceiverInterfaceClient::RangingRequest transceiver0_request;
+  transceiver0_request.responder_id = 2;
+  transceiver0_request.timeout = 1.;
+  transceiver0_request.payload.data = {1, 2, 3};
 
-  transceiver0_payload.data = {1, 2, 3};
+  romea::RTLSTransceiverInterfaceClient::Payload transceiver2_payload;
   transceiver2_payload.data = {4, 5, 6};
 
-  EXPECT_TRUE(transceiver0_client->set_payload(transceiver0_payload));
-  EXPECT_TRUE(transceiver2_client->set_payload(transceiver2_payload));
+  transceiver2_client->send_payload(transceiver2_payload);
+  transceiver0_client->send_ranging_request(transceiver0_request);
+  std::this_thread::sleep_for(std::chrono::seconds(1));
 
-  romea::TransceiverInterfaceClient::RangingResult result;
-  EXPECT_TRUE(transceiver0_client->ranging(2, result, std::chrono::seconds(1)));
-
-  EXPECT_TRUE(transceiver0_client->get_payload(transceiver0_payload));
-  EXPECT_TRUE(transceiver2_client->get_payload(transceiver2_payload));
-  EXPECT_EQ(transceiver0_payload.data[0], 4);
-  EXPECT_EQ(transceiver0_payload.data[1], 5);
-  EXPECT_EQ(transceiver0_payload.data[2], 6);
-  EXPECT_EQ(transceiver2_payload.data[0], 1);
-  EXPECT_EQ(transceiver2_payload.data[1], 2);
-  EXPECT_EQ(transceiver2_payload.data[2], 3);
+  EXPECT_NEAR(range, 23.0, 0.01);
+  EXPECT_EQ(sended_transceiver0_payload[0], 4);
+  EXPECT_EQ(sended_transceiver0_payload[1], 5);
+  EXPECT_EQ(sended_transceiver0_payload[2], 6);
+  EXPECT_EQ(sended_transceiver2_payload[0], 1);
+  EXPECT_EQ(sended_transceiver2_payload[1], 2);
+  EXPECT_EQ(sended_transceiver2_payload[2], 3);
 }
 
-TEST_F(GazeboRosRTLSTransceiverTest, checkRangeFailed)
+TEST_F(GazeboRosRTLSTransceiverTest, checkRangeFaileWhenTransceiverAreToFar)
 {
-  romea::TransceiverInterfaceClient::RangingResult result;
-  EXPECT_FALSE(transceiver2_client->ranging(1, result, std::chrono::seconds(1)));
+  romea::RTLSTransceiverInterfaceClient::RangingRequest request;
+  request.responder_id = 1;
+  request.timeout = 1.;
+  request.payload.data = {1, 2, 3};
+
+  transceiver2_client->send_ranging_request(request);
+  EXPECT_NEAR(range, 0.0, 0.01);
+}
+
+TEST_F(GazeboRosRTLSTransceiverTest, checkNoRangeWhenSendPayload)
+{
+  romea::RTLSTransceiverInterfaceClient::Payload payload;
+  payload.data = {1, 2, 3};
+
+  transceiver2_client->send_payload(payload);
+  EXPECT_NEAR(range, 0.0, 0.01);
+  EXPECT_EQ(sended_transceiver0_payload.size(), 0u);
+  EXPECT_EQ(sended_transceiver2_payload.size(), 0u);
 }
 
 int main(int argc, char ** argv)

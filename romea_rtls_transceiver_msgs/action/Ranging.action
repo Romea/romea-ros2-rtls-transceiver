@@ -1,5 +1,0 @@
-uint16 responder_id
----
-RangingResult range
----
-uint8 status

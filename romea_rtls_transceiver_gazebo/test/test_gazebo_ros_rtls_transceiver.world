@@ -78,7 +78,7 @@
     </model>
 
     <model name="transceiver2">
-      <pose>-10.0 0 0.0 0 0 0</pose>
+      <pose>23.0 0 0.0 0 0 0</pose>
       <link name="transceiver2_link">
         <collision name="collision">
           <geometry>

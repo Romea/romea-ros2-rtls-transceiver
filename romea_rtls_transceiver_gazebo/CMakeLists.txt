@@ -23,9 +23,7 @@ find_package(gazebo_msgs REQUIRED)
 link_directories(${gazebo_dev_LIBRARY_DIRS})
 
 add_library(romea_gazebo_ros_rtls_transceiver SHARED
-  src/gazebo_ros_rtls_network.cpp
   src/gazebo_ros_rtls_transceiver.cpp
-  src/gazebo_ros_rtls_transceiver_interface.cpp
 )
 
 target_include_directories(romea_gazebo_ros_rtls_transceiver PUBLIC include)
@@ -34,7 +32,7 @@ ament_target_dependencies(romea_gazebo_ros_rtls_transceiver
   "gazebo_msgs"
   "gazebo_dev"
   "romea_core_common"
-  "romea_core_rtls"
+  "romea_core_rtls_transceiver"
   "romea_rtls_transceiver_msgs"
   "romea_rtls_transceiver_utils"
 

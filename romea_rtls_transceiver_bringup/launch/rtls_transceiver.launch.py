@@ -19,7 +19,6 @@ from launch.actions import (
     IncludeLaunchDescription,
     DeclareLaunchArgument,
     OpaqueFunction,
-    GroupAction,
 )
 
 from launch.conditions import LaunchConfigurationEquals
@@ -74,7 +73,8 @@ def generate_launch_description():
 
     declared_arguments = []
 
-    declared_arguments.append(DeclareLaunchArgument("meta_description_file_path"))
+    declared_arguments.append(
+        DeclareLaunchArgument("meta_description_file_path"))
 
     declared_arguments.append(
         DeclareLaunchArgument("robot_namespace", default_value="")

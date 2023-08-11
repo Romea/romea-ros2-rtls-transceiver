@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ROMEA_RTLS_TRANSCEIVER_UTILS__TRANSCEIVER_PARAMETERS_HPP_
-#define ROMEA_RTLS_TRANSCEIVER_UTILS__TRANSCEIVER_PARAMETERS_HPP_
+#ifndef ROMEA_RTLS_TRANSCEIVER_UTILS__RTLS_TRANSCEIVER_PARAMETERS_HPP_
+#define ROMEA_RTLS_TRANSCEIVER_UTILS__RTLS_TRANSCEIVER_PARAMETERS_HPP_
 
 // eigen
 // #include <Eigen/Geometry>
@@ -33,11 +33,11 @@ void declare_transceiver_id(std::shared_ptr<rclcpp::Node> node);
 void declare_transceiver_pan_id(std::shared_ptr<rclcpp::Node> node);
 void declare_transceiver_communication_configuration(std::shared_ptr<rclcpp::Node> node);
 
-double get_transceiver_id(std::shared_ptr<rclcpp::Node> node);
-double get_transceiver_pan_id(std::shared_ptr<rclcpp::Node> node);
-double get_transceiver_communication_configuration(std::shared_ptr<rclcpp::Node> node);
+uint16_t get_transceiver_id(std::shared_ptr<rclcpp::Node> node);
+uint16_t  get_transceiver_pan_id(std::shared_ptr<rclcpp::Node> node);
+std::string get_transceiver_communication_configuration(std::shared_ptr<rclcpp::Node> node);
 
 
 }  // namespace romea
 
-#endif  // ROMEA_RTLS_TRANSCEIVER_UTILS__TRANSCEIVER_PARAMETERS_HPP_
+#endif  // ROMEA_RTLS_TRANSCEIVER_UTILS__RTLS_TRANSCEIVER_PARAMETERS_HPP_
