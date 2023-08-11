@@ -14,6 +14,7 @@
 
 // std
 #include <string>
+#include <memory>
 
 // gtest
 #include "gtest/gtest.h"
