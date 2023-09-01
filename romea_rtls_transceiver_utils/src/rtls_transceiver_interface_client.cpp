@@ -66,7 +66,7 @@ void RTLSTransceiverInterfaceClient::send_ranging_request(const RangingRequest &
     request_pub_->publish(resquest);
   } else {
     std::stringstream msg;
-    msg << "Ranging request has not been send to tranceiver ";
+    msg << "Ranging request has not been send to transceiver ";
     msg << transceiver_name_;
     msg << " because server interface is not available";
     RCLCPP_ERROR_STREAM(logger_, msg.str());

@@ -49,11 +49,6 @@ public:
     RangingResultCallback ranging_result_callback = {},
     PayloadCallback payload_callback = {});
 
-  // RTLSTransceiverInterfaceClient(
-  //   std::shared_ptr<rclcpp::Node> node,
-  //   const std::string & transceiver_name,
-  //   RangingResultCallback ranging_result_callback);
-
   bool is_server_available() const;
 
   void send_ranging_request(const RangingRequest & resquest);
