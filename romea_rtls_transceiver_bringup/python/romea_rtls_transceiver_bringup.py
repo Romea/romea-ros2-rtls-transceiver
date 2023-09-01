@@ -71,6 +71,17 @@ def get_transceivers_names(meta_descriptions):
     return [meta_description.get_name() for meta_description in meta_descriptions]
 
 
+def get_transceivers_ros_names(parent_entity_namespace, meta_descriptions):
+    return [
+        device_namespace(
+            parent_entity_namespace,
+            meta_description.get_namespace(),
+            meta_description.get_name(),
+        )
+        for meta_description in meta_descriptions
+    ]
+
+
 def get_transceivers_pan_ids(meta_descriptions):
     return [meta_description.get_pan_id() for meta_description in meta_descriptions]
 
