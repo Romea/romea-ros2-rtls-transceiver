@@ -46,8 +46,8 @@
       <child link="${link_name}" />
     </joint>
 
-
     <xacro:if value="${'simulation' in  mode}">
+
       <gazebo>
         <plugin name="driver" filename="libromea_gazebo_ros_rtls_transceiver.so">
           <link_name>${link_name}</link_name>

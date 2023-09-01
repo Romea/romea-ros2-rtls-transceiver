@@ -5,9 +5,10 @@
 
     <xacro:include filename="$(find romea_rtls_transceiver_description)/urdf/transceiver.xacro" />
 
-    <link name="support" />
+    <link name="support_${name}"/>
+ 
     <xacro:transceiver prefix="" mode="${mode}" name="${name}" type="${type}" conf="${conf}"
-      id=" ${id}" pan_id=" ${id}" control_mode="standalone" parent_link="support" xyz=" 0.0 0.0 0.0"
+      id="${id}" pan_id="${pan_id}" control_mode="standalone" parent_link="support_${name}" xyz="0.0 0.0 0.0"
       ros_namespace="" />
 
     <gazebo reference="${name}_link">
