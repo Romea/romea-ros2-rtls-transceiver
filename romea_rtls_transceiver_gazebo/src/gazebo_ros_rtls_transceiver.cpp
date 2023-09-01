@@ -21,6 +21,7 @@
 // gazebo
 #include "gazebo/physics/Model.hh"
 #include "gazebo/physics/Link.hh"
+#include "gazebo/physics/Collision.hh"
 
 // ros
 #include "gazebo_ros/node.hpp"
@@ -114,6 +115,8 @@ GazeboRosRTLSTransceiver::GazeboRosRTLSTransceiver()
 //-----------------------------------------------------------------------------
 void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
 {
+  // std::cout << " model name " << _model->GetName() << std::endl;
+
   std::string transceiver_link_name;
   if (_sdf->HasElement("link_name")) {
     _sdf->GetElement("link_name")->GetValue()->Get(transceiver_link_name);
@@ -121,9 +124,11 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
     gzthrow("RTLS transceiver link_name not found in sdf");
     return;
   }
-  // std::cout << "transceiver_link_name " << transceiver_link_name << std::endl;
 
-  impl_->link = _model->GetLink(transceiver_link_name);
+  // std::cout << "transceiver_link_name" << transceiver_link_name << std::endl;
+  //impl->link = _model->GetLink(transceiver_link_name);
+  // get canonical link because transceiver link is not defined in sdf file due to lumb
+  impl_->link = _model->GetLink();
 
   std::string transceiver_name;
   if (_sdf->HasElement("transceiver_name")) {
@@ -162,14 +167,27 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
     return;
   }
 
-  if (_sdf->HasElement("xyz")) {
-    std::istringstream iss(_sdf->GetElement("xyz")->GetValue()->GetAsString());
-    iss >> impl_->position.X();
-    iss >> impl_->position.Y();
-    iss >> impl_->position.Z();
-  } else {
-    gzthrow("Rtls transceiver xyz not found in sdf");
-  }
+  // Collision position is the same of transceiver position
+  auto collisions = impl_->link->GetCollisions();
+  auto it = std::find_if(
+    collisions.begin(),
+    collisions.end(),
+    [&transceiver_link_name](const gazebo::physics::CollisionPtr & collision)
+    {
+      return collision->GetName().find(transceiver_link_name) != std::string::npos;
+    });
+
+  assert(it != impl_->link->GetCollisions().end());
+  impl_->position = (*it)->RelativePose().Pos();
+
+  // if (_sdf->HasElement("xyz")) {
+  //   std::istringstream iss(_sdf->GetElement("xyz")->GetValue()->GetAsString());
+  //   iss >> impl_->position.X();
+  //   iss >> impl_->position.Y();
+  //   iss >> impl_->position.Z();
+  // } else {
+  //   gzthrow("Rtls transceiver xyz not found in sdf");
+  // }
 
   if (_sdf->HasElement("minimal_range")) {
     _sdf->GetElement("minimal_range")->GetValue()->Get(impl_->minimal_range);
@@ -208,6 +226,8 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   // std::cout << " transceiver_name " << transceiver_name << std::endl;
   // std::cout << " transceiver_pand_id " << transceiver_pan_id << std::endl;
   // std::cout << " transceiver_id " << transceiver_id << std::endl;
+  // std::cout << " transceiver_position " << impl_->position[0] << " " << impl_->position[1] << " " <<
+  //   impl_->position[2] << std::endl;
 
   if (mode != "standalone") {
     impl_->node = gazebo_ros::Node::Get(_sdf);
@@ -307,6 +327,7 @@ void GazeboRosRTLSNetwork::ranging(
 {
   GazeboRosRTLSTransceiverPrivate * initiator = transceivers_[initiator_euid];
   GazeboRosRTLSTransceiverPrivate * responder = transceivers_[responder_euid];
+
 
   if (responder != nullptr && initiator != nullptr) {
     auto initiator_position = initiator->compute_world_position();
