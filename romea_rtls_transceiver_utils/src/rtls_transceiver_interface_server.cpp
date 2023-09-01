@@ -45,7 +45,8 @@ RTLSTransceiverInterfaceServer::RTLSTransceiverInterfaceServer(
   result_pub_ = node->create_publisher<RangingResult>("range", sensor_data_qos());
   payload_pub_ = node->create_publisher<Payload>("payload", sensor_data_qos());
 
-  // std::cout << result_pub_->get_topic_name() << " " << payload_pub_->get_topic_name() << std::endl;
+  // std::cout << result_pub_->get_topic_name() << " "
+  //           << payload_pub_->get_topic_name() << std::endl;
 }
 
 //-----------------------------------------------------------------------------

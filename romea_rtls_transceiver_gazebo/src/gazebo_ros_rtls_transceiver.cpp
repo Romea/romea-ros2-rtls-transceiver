@@ -126,7 +126,7 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   }
 
   // std::cout << "transceiver_link_name" << transceiver_link_name << std::endl;
-  //impl->link = _model->GetLink(transceiver_link_name);
+  // impl->link = _model->GetLink(transceiver_link_name);
   // get canonical link because transceiver link is not defined in sdf file due to lumb
   impl_->link = _model->GetLink();
 
@@ -226,8 +226,10 @@ void GazeboRosRTLSTransceiver::Load(physics::ModelPtr _model, sdf::ElementPtr _s
   // std::cout << " transceiver_name " << transceiver_name << std::endl;
   // std::cout << " transceiver_pand_id " << transceiver_pan_id << std::endl;
   // std::cout << " transceiver_id " << transceiver_id << std::endl;
-  // std::cout << " transceiver_position " << impl_->position[0] << " " << impl_->position[1] << " " <<
-  //   impl_->position[2] << std::endl;
+  // std::cout << " transceiver_position "
+  //           << impl_->position[0] << " "
+  //           << impl_->position[1] << " "
+  //           << impl_->position[2] << std::endl;
 
   if (mode != "standalone") {
     impl_->node = gazebo_ros::Node::Get(_sdf);
