@@ -121,3 +121,9 @@ def test_get_transceivers_xyz(meta_descriptions):
     transceivers_xyz = get_transceivers_xyz(meta_descriptions)
     transceivers_xyz[0] == [1.0, 2.0, 3.0]
     transceivers_xyz[1] == [4.0, 5.0, 6.0]
+
+
+def test_get_records(meta_descriptions):
+    records = meta_descriptions[0].get_records()
+    assert records["range"] is True
+    assert records["payload"] is False
